@@ -14,4 +14,8 @@ Gem::Specification.new do |gem|
   gem.name          = "active_record-observers"
   gem.require_paths = ["lib"]
   gem.version       = ActiveRecord::Observers::VERSION
+
+  gem.add_development_dependency 'minitest',     '>= 3'
+  gem.add_development_dependency 'activerecord', '~> 4.0.0.beta'
+  gem.add_development_dependency 'sqlite3',      '~> 1.3'
 end
