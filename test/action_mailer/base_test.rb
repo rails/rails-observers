@@ -1,3 +1,46 @@
+require 'minitest/autorun'
+require 'action_mailer'
+
+FIXTURE_LOAD_PATH = File.expand_path('fixtures', File.dirname(__FILE__))
+ActionMailer::Base.view_paths = FIXTURE_LOAD_PATH
+
+class MockSMTP
+  def self.deliveries
+    @@deliveries
+  end
+
+  def initialize
+    @@deliveries = []
+  end
+
+  def sendmail(mail, from, to)
+    @@deliveries << [mail, from, to]
+  end
+
+  def start(*args)
+    yield self
+  end
+end
+
+class Net::SMTP
+  def self.new(*args)
+    MockSMTP.new
+  end
+end
+
+class BaseMailer < ActionMailer::Base
+  self.mailer_name = "base_mailer"
+
+  default :to => 'system@test.lindsaar.net',
+          :from => 'jose@test.plataformatec.com',
+          :reply_to => 'mikel@test.lindsaar.net'
+
+  def welcome(hash = {})
+    headers['X-SPAM'] = "Not SPAM"
+    mail({:subject => "The first email on new API!"}.merge!(hash))
+  end
+end
+
 class BaseTest < ActiveSupport::TestCase
   class MyObserver
     def self.delivered_email(mail)
