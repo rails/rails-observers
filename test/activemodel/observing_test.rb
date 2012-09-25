@@ -1,4 +1,6 @@
-require 'cases/helper'
+require 'minitest/autorun'
+require 'active_model'
+require 'active_record-observers/active_model/observing'
 
 class ObservedModel
   include ActiveModel::Observing
