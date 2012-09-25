@@ -1,5 +1,5 @@
 require 'singleton'
-require 'active_model/observer_array'
+require 'active_record-observers/active_model/observer_array'
 require 'active_support/core_ext/module/aliasing'
 require 'active_support/core_ext/module/remove_method'
 require 'active_support/core_ext/string/inflections'
