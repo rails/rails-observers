@@ -1,5 +1,39 @@
+require 'minitest/autorun'
+require 'action_controller'
+require 'active_record-observers/activerecord/observer'
+require 'active_record-observers/actionpack/action_controller/caching'
+
+SharedTestRoutes = ActionDispatch::Routing::RouteSet.new
+
+module ActionController
+  class Base
+    include SharedTestRoutes.url_helpers
+  end
+end
+
 class FilterTest < ActionController::TestCase
+  class TestController < ActionController::Base
+    before_filter :ensure_login
+    after_filter  :clean_up
+
+    def show
+      render :inline => "ran action"
+    end
+
+    private
+      def ensure_login
+        @ran_filter ||= []
+        @ran_filter << "ensure_login"
+      end
+
+      def clean_up
+        @ran_after_filter ||= []
+        @ran_after_filter << "clean_up"
+      end
+  end
+
   class ::AppSweeper < ActionController::Caching::Sweeper; end
+
   class SweeperTestController < ActionController::Base
     cache_sweeper :app_sweeper
     def show
@@ -9,6 +43,16 @@ class FilterTest < ActionController::TestCase
     def error
       raise StandardError.new
     end
+  end
+
+  def setup
+    @routes = SharedTestRoutes
+
+    @routes.draw do
+      get ':controller(/:action)'
+    end
+
+    super
   end
 
   def test_sweeper_should_not_ignore_no_method_error
@@ -39,5 +83,14 @@ class FilterTest < ActionController::TestCase
     sweeper = ActionController::Caching::Sweeper.send(:new)
     assert_nil sweeper.after(TestController.new)
   end
+
+  private
+    def test_process(controller, action = "show")
+      @controller = controller.is_a?(Class) ? controller.new : controller
+      @request    = ActionController::TestRequest.new
+      @response   = ActionController::TestResponse.new
+
+      process(action)
+    end
 end
 
