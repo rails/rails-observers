@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require 'action_controller'
 require 'active_record-observers/activerecord/observer'
-require 'active_record-observers/actionpack/action_controller/caching'
+require 'active_record-observers/action_controller/caching'
 
 SharedTestRoutes = ActionDispatch::Routing::RouteSet.new
 
