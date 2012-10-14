@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/active_record-observers/version', __FILE__)
+require File.expand_path('../lib/rails/observers/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Steve Klabnik"]
@@ -11,9 +11,9 @@ Gem::Specification.new do |gem|
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "active_record-observers"
+  gem.name          = "rails-observers"
   gem.require_paths = ["lib"]
-  gem.version       = ActiveRecord::Observers::VERSION
+  gem.version       = Rails::Observers::VERSION
 
   gem.add_development_dependency 'minitest',     '>= 3'
   gem.add_development_dependency 'mocha'
