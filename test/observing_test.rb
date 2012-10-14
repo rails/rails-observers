@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require 'active_model'
-require 'rails-observers'
+require 'rails/observers/active_model/active_model'
 
 class ObservedModel
   include ActiveModel::Observing

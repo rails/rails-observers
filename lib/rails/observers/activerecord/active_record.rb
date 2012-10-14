@@ -1,3 +1,5 @@
+require 'rails/observers/activerecord/model'
+
 module ActiveRecord
-  autoload :Observer
+  autoload :Observer, 'rails/observers/activerecord/observer'
 end
