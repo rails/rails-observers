@@ -1,7 +1,5 @@
 require 'helper'
 
-require 'models/topic'
-
 class SpecialDeveloper < Developer; end
 
 class DeveloperObserver < ActiveRecord::Observer
