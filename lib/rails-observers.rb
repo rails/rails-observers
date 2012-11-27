@@ -4,7 +4,7 @@ require 'rails/observers/version'
 module Rails
   module Observers
     class Railtie < ::Rails::Railtie
-      initializer "active_record.observer" do
+      initializer "active_record.observer", :before => "active_record.set_configs" do
         ActiveSupport.on_load(:active_record) do
           require "rails/observers/activerecord/active_record"
         end

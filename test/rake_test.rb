@@ -1,3 +1,6 @@
+require 'isolation/abstract_unit'
+require 'rails-observers'
+
 module ApplicationTests
   class RakeTest < ActiveSupport::TestCase
     include ActiveSupport::Testing::Isolation
@@ -11,7 +14,7 @@ module ApplicationTests
     def teardown
       teardown_app
     end
- 	
+
     def test_load_activerecord_base_when_we_use_observers
       Dir.chdir(app_path) do
         `bundle exec rails g model user;
