@@ -1,3 +1,5 @@
+require 'rails'
+
 module Rails
   module Generators
     class ObserverGenerator < NamedBase #metagenerator
