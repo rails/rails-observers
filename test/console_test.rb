@@ -1,3 +1,6 @@
+require 'isolation/abstract_unit'
+require 'rails-observers'
+
 class ConsoleTest < ActiveSupport::TestCase
   include ActiveSupport::Testing::Isolation
 
@@ -8,6 +11,12 @@ class ConsoleTest < ActiveSupport::TestCase
 
   def teardown
     teardown_app
+  end
+
+  def load_environment
+    require "#{rails_root}/config/environment"
+    Rails.application.sandbox = false
+    Rails.application.load_console
   end
 
   def test_active_record_does_not_panic_when_referencing_an_observed_constant
