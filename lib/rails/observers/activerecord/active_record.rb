@@ -1,4 +1,4 @@
-require 'rails/observers/activerecord/model'
+require 'rails/observers/activerecord/base'
 
 module ActiveRecord
   autoload :Observer, 'rails/observers/activerecord/observer'
