@@ -15,6 +15,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Rails::Observers::VERSION
 
+  gem.add_dependency 'railties', '~> 4.0.0.beta'
+
   gem.add_development_dependency 'minitest',     '>= 3'
   gem.add_development_dependency 'mocha'
   gem.add_development_dependency 'activerecord', '~> 4.0.0.beta'

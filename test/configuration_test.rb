@@ -1,58 +1,41 @@
-class ::MyMailObserver
-  def self.delivered_email(email); email; end
-end
+require "isolation/abstract_unit"
+require "rails-observers"
 
-class ::MyOtherMailObserver < ::MyMailObserver; end
+class ConfigurationTest < ActiveSupport::TestCase
+  include ActiveSupport::Testing::Isolation
 
-module ApplicationTests
-  class ConfigurationTest < ActiveSupport::TestCase
-    include ActiveSupport::Testing::Isolation
+  def app
+    @app ||= Rails.application
+  end
 
-    test "registers observers with ActionMailer" do
-      add_to_config <<-RUBY
-        config.action_mailer.observers = MyMailObserver
-      RUBY
+  def setup
+    build_app
+    boot_rails
+    FileUtils.rm_rf("#{app_path}/config/environments")
+  end
 
-      require "#{app_path}/config/environment"
-      require "mail"
+  def teardown
+    teardown_app
+  end
 
-      _ = ActionMailer::Base
+  test "config.active_record.observers" do
+    add_to_config <<-RUBY
+      config.active_record.observers = :foo_observer
+    RUBY
 
-      assert_equal [::MyMailObserver], ::Mail.send(:class_variable_get, "@@delivery_notification_observers")
-    end
+    app_file 'app/models/foo.rb', <<-RUBY
+      class Foo < ActiveRecord::Base
+      end
+    RUBY
 
-    test "registers multiple observers with ActionMailer" do
-      add_to_config <<-RUBY
-        config.action_mailer.observers = [MyMailObserver, "MyOtherMailObserver"]
-      RUBY
+    app_file 'app/models/foo_observer.rb', <<-RUBY
+      class FooObserver < ActiveRecord::Observer
+      end
+    RUBY
 
-      require "#{app_path}/config/environment"
-      require "mail"
+    require "#{app_path}/config/environment"
 
-      _ = ActionMailer::Base
-
-      assert_equal [::MyMailObserver, ::MyOtherMailObserver], ::Mail.send(:class_variable_get, "@@delivery_notification_observers")
-    end
-
-    test "config.active_record.observers" do
-      add_to_config <<-RUBY
-        config.active_record.observers = :foo_observer
-      RUBY
-
-      app_file 'app/models/foo.rb', <<-RUBY
-        class Foo < ActiveRecord::Base
-        end
-      RUBY
-
-      app_file 'app/models/foo_observer.rb', <<-RUBY
-        class FooObserver < ActiveRecord::Observer
-        end
-      RUBY
-
-      require "#{app_path}/config/environment"
-
-      ActiveRecord::Base
-      assert defined?(FooObserver)
-    end
+    ActiveRecord::Base
+    assert defined?(FooObserver)
   end
 end
