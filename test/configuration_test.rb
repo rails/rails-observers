@@ -35,7 +35,7 @@ class ConfigurationTest < ActiveSupport::TestCase
 
     require "#{app_path}/config/environment"
 
-    ActiveRecord::Base
+    _ = ActiveRecord::Base
     assert defined?(FooObserver)
   end
 end
