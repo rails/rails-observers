@@ -1,5 +1,4 @@
-require "cases/helper"
-require 'models/topic'
+require "helper"
 
 class TransactionCallbacksTest < ActiveRecord::TestCase
   self.use_transactional_fixtures = false
