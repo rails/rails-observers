@@ -1,9 +1,6 @@
-require 'cases/helper'
+require 'helper'
+
 require 'models/topic'
-require 'models/developer'
-require 'models/reply'
-require 'models/minimalistic'
-require 'models/comment'
 
 class SpecialDeveloper < Developer; end
 
@@ -31,7 +28,6 @@ class SalaryChecker < ActiveRecord::Observer
     end
   end
   include Implementation
-
 end
 
 class TopicaAuditor < ActiveRecord::Observer
@@ -252,5 +248,4 @@ class LifecycleTest < ActiveRecord::TestCase
 
     assert_equal [developer, special_developer], observer.calls
   end
-
 end
