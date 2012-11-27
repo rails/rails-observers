@@ -4,10 +4,6 @@ require 'rails-observers'
 class ConfigurationTest < ActiveSupport::TestCase
   include ActiveSupport::Testing::Isolation
 
-  def app
-    @app ||= Rails.application
-  end
-
   def setup
     build_app
     boot_rails
