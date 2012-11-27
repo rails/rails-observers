@@ -9,6 +9,11 @@ class NamespacedObserverGeneratorTest < Rails::Generators::TestCase
     Rails::Generators.namespace = TestApp
   end
 
+  def teardown
+    super
+    Rails::Generators.namespace = nil
+  end
+
   arguments %w(account)
   tests Rails::Generators::ObserverGenerator
 
