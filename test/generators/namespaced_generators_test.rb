@@ -1,11 +1,14 @@
 require 'generators/generators_test_helper'
-require 'rails/generators/rails/observer/observer_generator'
+require 'generators/rails/observer/observer_generator'
 
 class NamespacedObserverGeneratorTest < Rails::Generators::TestCase
-  include GeneratorsTestHelper
+  tests Rails::Generators::ObserverGenerator
+  arguments %w(account)
+  destination File.expand_path("../../tmp", __FILE__)
 
   def setup
     super
+    prepare_destination
     Rails::Generators.namespace = TestApp
   end
 
@@ -13,9 +16,6 @@ class NamespacedObserverGeneratorTest < Rails::Generators::TestCase
     super
     Rails::Generators.namespace = nil
   end
-
-  arguments %w(account)
-  tests Rails::Generators::ObserverGenerator
 
   def test_invokes_default_orm
     run_generator
