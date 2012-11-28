@@ -7,3 +7,5 @@ gem 'activerecord-deprecated_finders', git: 'git://github.com/rails/activerecord
 gem 'journey', git: 'https://github.com/rails/journey.git'
 
 gem 'rails', git: 'git://github.com/rafaelfranca/rails', branch: 'extract_observers'
+
+gem 'mocha', require: false
