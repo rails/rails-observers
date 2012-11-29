@@ -54,8 +54,9 @@ module TestHelpers
         end
       end
 
-      unless options[:gemfile]
-        File.delete "#{app_path}/Gemfile"
+      gemfile_path = "#{app_path}/Gemfile"
+      if options[:gemfile].blank? && File.exist?(gemfile_path)
+        File.delete gemfile_path
       end
 
       routes = File.read("#{app_path}/config/routes.rb")
@@ -105,4 +106,14 @@ end
 class ActiveSupport::TestCase
   include TestHelpers::Paths
   include TestHelpers::Generation
+end
+
+Module.new do
+  extend TestHelpers::Paths
+
+  # Build a rails app
+  FileUtils.rm_rf(app_template_path)
+  FileUtils.mkdir(app_template_path)
+
+  `rails new #{app_template_path} --skip-gemfile`
 end
