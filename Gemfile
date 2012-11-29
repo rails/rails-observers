@@ -3,9 +3,9 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in active_record-observers.gemspec
 gemspec
 
-gem 'activerecord-deprecated_finders', git: 'git://github.com/rails/activerecord-deprecated_finders'
-gem 'journey', git: 'https://github.com/rails/journey.git'
+gem 'activerecord-deprecated_finders', github: 'rails/activerecord-deprecated_finders'
+gem 'journey', github: 'rails/journey'
 
-gem 'rails', git: 'git://github.com/rafaelfranca/rails', branch: 'extract_observers'
+gem 'rails', github: 'rails/rails', branch: 'master'
 
 gem 'mocha', require: false
