@@ -14,7 +14,7 @@ module Rails
         end
       end
 
-      initializer "action_controller.caching.sweppers" do
+      initializer "action_controller.caching.sweepers" do
         ActiveSupport.on_load(:action_controller) do
           require "rails/observers/action_controller/caching"
         end
