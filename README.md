@@ -55,6 +55,11 @@ end
 
 This Observer uses logger to log when specific callbacks are triggered.
 
+Please note that observers are called in the order that they are defined. That means that callbacks in an observer
+will always be called *after* callbacks defined in the model itself. Likewise, `has_one` and `has_many` 
+use callbacks to enforce `:dependent => :destroy`. Therefore, associated records will be destroyed before
+the observer's `before_destory` is called. 
+
 ### Action Controller Sweeper
 
 Sweepers are the terminators of the caching world and responsible for expiring caches when model objects change.
