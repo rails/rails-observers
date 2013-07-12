@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency 'minitest',     '>= 3'
-  s.add_development_dependency 'railties', '~> 4.0.0.beta'
-  s.add_development_dependency 'activerecord', '~> 4.0.0.beta'
-  s.add_development_dependency 'activemodel', '~> 4.0.0.beta'
-  s.add_development_dependency 'actionmailer', '~> 4.0.0.beta'
-  s.add_development_dependency 'actionpack', '~> 4.0.0.beta'
+  s.add_development_dependency 'railties', '~> 4.0.0'
+  s.add_development_dependency 'activerecord', '~> 4.0.0'
+  s.add_development_dependency 'activemodel', '~> 4.0.0'
+  s.add_development_dependency 'actionmailer', '~> 4.0.0'
+  s.add_development_dependency 'actionpack', '~> 4.0.0'
   s.add_development_dependency 'sqlite3',      '~> 1.3'
 end
