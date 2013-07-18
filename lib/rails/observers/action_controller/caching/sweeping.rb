@@ -30,8 +30,6 @@ module ActionController #:nodoc:
     #     cache_sweeper OpenBar::Sweeper, :only => [ :edit, :destroy, :share ]
     #   end
     module Sweeping
-      extend ActiveSupport::Concern
-
       module ClassMethods #:nodoc:
         def cache_sweeper(*sweepers)
           configuration = sweepers.extract_options!
