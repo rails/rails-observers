@@ -4,6 +4,5 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'activerecord-deprecated_finders'
-gem 'rails', '~> 4.0'
 
 gem 'mocha', require: false
