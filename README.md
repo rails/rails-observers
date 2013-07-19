@@ -1,3 +1,4 @@
+[![Build Status](https://secure.travis-ci.org/rails/rails-observers.png)](https://travis-ci.org/rails/rails-observers)
 # Rails::Observers
 
 Rails Observers (removed from core in Rails 4.0)
@@ -56,15 +57,15 @@ end
 This Observer uses logger to log when specific callbacks are triggered.
 
 Please note that observers are called in the order that they are defined. That means that callbacks in an observer
-will always be called *after* callbacks defined in the model itself. Likewise, `has_one` and `has_many` 
+will always be called *after* callbacks defined in the model itself. Likewise, `has_one` and `has_many`
 use callbacks to enforce `:dependent => :destroy`. Therefore, associated records will be destroyed before
-the observer's `before_destory` is called. 
+the observer's `before_destory` is called.
 
 For an observer to be active, it must be registered first. This can be done by adding the following line into the `application.rb`:
 
     config.active_record.observers = :contact_observer
 
-Obeservers can also be registered on an environment-specific basis by simply using the corresponding environment's configuration file instead of `application.rb`. 
+Obeservers can also be registered on an environment-specific basis by simply using the corresponding environment's configuration file instead of `application.rb`.
 
 ### Action Controller Sweeper
 
