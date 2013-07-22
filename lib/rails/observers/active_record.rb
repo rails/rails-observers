@@ -1,1 +1,1 @@
-require 'rails/observers/activerecord/active_record'
+require 'rails/observers/active_record/active_record'

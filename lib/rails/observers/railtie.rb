@@ -5,7 +5,7 @@ module Rails
     class Railtie < ::Rails::Railtie
       initializer "active_record.observer", :before => "active_record.set_configs" do |app|
         ActiveSupport.on_load(:active_record) do
-          require "rails/observers/activerecord/active_record"
+          require "rails/observers/active_record/active_record"
 
           if observers = app.config.respond_to?(:active_record) && app.config.active_record.delete(:observers)
             send :observers=, observers
