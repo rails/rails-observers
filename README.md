@@ -40,7 +40,7 @@ class CommentObserver < ActiveRecord::Observer
 end
 ```
 
-This Observer sends an email when a Comment#save is finished.
+This Observer sends an email when a Comment#create is finished.
 
 ```ruby
 class ContactObserver < ActiveRecord::Observer
@@ -56,16 +56,16 @@ end
 
 This Observer uses logger to log when specific callbacks are triggered.
 
-Please note that observers are called in the order that they are defined. That means that callbacks in an observer
+Please note that observers are called in the order that they are defined. This means that callbacks in an observer
 will always be called *after* callbacks defined in the model itself. Likewise, `has_one` and `has_many`
 use callbacks to enforce `:dependent => :destroy`. Therefore, associated records will be destroyed before
-the observer's `before_destory` is called.
+the observer's `before_destroy` is called.
 
 For an observer to be active, it must be registered first. This can be done by adding the following line into the `application.rb`:
 
     config.active_record.observers = :contact_observer
 
-Obeservers can also be registered on an environment-specific basis by simply using the corresponding environment's configuration file instead of `application.rb`.
+Observers can also be registered on an environment-specific basis by simply using the corresponding environment's configuration file instead of `application.rb`.
 
 ### Action Controller Sweeper
 
@@ -85,7 +85,7 @@ class ListSweeper < ActionController::Caching::Sweeper
 end
 ```
 
-The sweeper is assigned in the controllers that wish to have its job performed using the `cache_sweeper` class method:
+The sweeper is assigned in the controllers that wish to have its' job performed using the `cache_sweeper` class method:
 
 ```ruby
 class ListsController < ApplicationController
