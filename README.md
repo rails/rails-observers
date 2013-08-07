@@ -40,7 +40,7 @@ class CommentObserver < ActiveRecord::Observer
 end
 ```
 
-This Observer sends an email when a Comment#create is finished.
+This Observer sends an email when a Comment#save is finished.
 
 ```ruby
 class ContactObserver < ActiveRecord::Observer
