@@ -73,7 +73,11 @@ module ActiveModel
     protected
 
       def disabled_observers #:nodoc:
-        @disabled_observers ||= Set.new
+        Thread.current[disabled_observers_thread_key] ||= Set.new
+      end
+
+      def disabled_observers= dis_observers #:nodoc:
+        Thread.current[disabled_observers_thread_key] = dis_observers
       end
 
       def observer_class_for(observer) #:nodoc:
@@ -95,11 +99,11 @@ module ActiveModel
       end
 
       def disabled_observer_stack #:nodoc:
-        @disabled_observer_stack ||= []
+        Thread.current[disabled_observer_stack_thread_key] ||= []
       end
 
       def end_transaction #:nodoc:
-        @disabled_observers = disabled_observer_stack.pop
+        self.disabled_observers = disabled_observer_stack.pop
         each_subclass_array do |array|
           array.end_transaction
         end
@@ -147,6 +151,14 @@ module ActiveModel
             array.set_enablement(enabled, observers)
           end
         end
+      end
+
+      def disabled_observers_thread_key
+        "observer_array:#{model_class}::disabled_observers"
+      end
+
+      def disabled_observer_stack_thread_key
+        "observer_array:#{model_class}::disabled_observer_stack"
       end
   end
 end
