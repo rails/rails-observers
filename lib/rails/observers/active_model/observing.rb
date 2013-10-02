@@ -1,4 +1,5 @@
 require 'singleton'
+require 'rails/observers/active_model/disabled_observers_registry'
 require 'rails/observers/active_model/observer_array'
 require 'active_support/core_ext/module/aliasing'
 require 'active_support/core_ext/module/remove_method'

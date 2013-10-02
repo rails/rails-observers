@@ -73,11 +73,11 @@ module ActiveModel
     protected
 
       def disabled_observers #:nodoc:
-        Thread.current[disabled_observers_thread_key] ||= Set.new
+        DisabledObserversRegistry.disabled_observers_per_class[model_class] ||= Set.new
       end
 
-      def disabled_observers= dis_observers #:nodoc:
-        Thread.current[disabled_observers_thread_key] = dis_observers
+      def disabled_observers= observers #:nodoc:
+        DisabledObserversRegistry.disabled_observers_per_class[model_class] = observers
       end
 
       def observer_class_for(observer) #:nodoc:
@@ -99,7 +99,7 @@ module ActiveModel
       end
 
       def disabled_observer_stack #:nodoc:
-        Thread.current[disabled_observer_stack_thread_key] ||= []
+        DisabledObserversRegistry.disabled_observers_stacks_per_class[model_class] ||= []
       end
 
       def end_transaction #:nodoc:
