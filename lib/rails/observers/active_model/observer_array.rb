@@ -152,13 +152,5 @@ module ActiveModel
           end
         end
       end
-
-      def disabled_observers_thread_key
-        "observer_array:#{model_class}::disabled_observers"
-      end
-
-      def disabled_observer_stack_thread_key
-        "observer_array:#{model_class}::disabled_observer_stack"
-      end
   end
 end
