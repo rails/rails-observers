@@ -30,7 +30,8 @@ Observer classes respond to life cycle callbacks to implement trigger-like
 behavior outside the original class. This is a great way to reduce the
 clutter that normally comes when the model class is burdened with
 functionality that doesn't pertain to the core responsibility of the
-class. Observers are put in `app/models` (e.g. `app/models/comment_observer.rb`). Example:
+class. Observers are put in `app/models` (e.g.
+`app/models/comment_observer.rb`). Example:
 
 ```ruby
 class CommentObserver < ActiveRecord::Observer
@@ -56,12 +57,14 @@ end
 
 This Observer uses logger to log when specific callbacks are triggered.
 
-The convention is to name observers after the class they observe. If you absolutely need to override this, or want to use one observer for several classes, use `observe`:
+The convention is to name observers after the class they observe. If you
+absolutely need to override this, or want to use one observer for several
+classes, use `observe`:
 
 ```ruby
 class NotificationsObserver < ActiveRecord::Observer
   observe :comment, :like
-  
+
   after_create(record)
     # notifiy users of new comment or like
   end
