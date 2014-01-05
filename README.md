@@ -65,7 +65,7 @@ classes, use `observe`:
 class NotificationsObserver < ActiveRecord::Observer
   observe :comment, :like
 
-  after_create(record)
+  def after_create(record)
     # notifiy users of new comment or like
   end
 
