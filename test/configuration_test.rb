@@ -14,11 +14,7 @@ class ConfigurationTest < ActiveSupport::TestCase
     teardown_app
   end
 
-  test "config.active_record.observers" do
-    add_to_config <<-RUBY
-      config.active_record.observers = :foo_observer
-    RUBY
-
+  test "autoload observers before rails config initialization" do
     app_file 'app/models/foo.rb', <<-RUBY
       class Foo < ActiveRecord::Base
       end
