@@ -3,7 +3,7 @@ module ActionController #:nodoc:
     extend ActiveSupport::Autoload
 
     eager_autoload do
-      autoload :Sweeper,  'rails/observers/action_controller/caching/sweeping'
+      autoload :Sweeper,  'rails/observers/action_controller/caching/sweeper'
       autoload :Sweeping, 'rails/observers/action_controller/caching/sweeping'
     end
 
