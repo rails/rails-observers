@@ -19,6 +19,15 @@ module Rails
         end
       end
 
+      config.before_initialize do |app|
+        Dir.glob(File.join([Rails.root, "app", "models", "*_observer.rb"])).each do |observer_file|
+          observer_name = File.basename(observer_file, ".rb")
+          if observer_name.length > 0
+            app.config.active_record.observers = observer_name.to_sym
+          end
+        end
+      end
+
       config.after_initialize do |app|
         ActiveSupport.on_load(:active_record) do
           ActiveRecord::Base.instantiate_observers
