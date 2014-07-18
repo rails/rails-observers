@@ -27,6 +27,14 @@ module ActionController #:nodoc:
         clean_up
       end
 
+      # Execute standard observer logic only if controller was initiated, i.e.
+      # it is being triggered from the controller/action as specified in
+      # controller's <tt>cache_sweeper</tt> class method.
+      def update(observed_method, object, *extra_args, &block) #:nodoc:
+        return unless controller
+        super
+      end
+
       protected
       # gets the action cache path for the given options.
       def action_path_for(options)
@@ -48,8 +56,15 @@ module ActionController #:nodoc:
         controller_callback_method_name = "#{timing}_#{controller.controller_name.underscore}"
         action_callback_method_name     = "#{controller_callback_method_name}_#{controller.action_name}"
 
-        __send__(controller_callback_method_name) if respond_to?(controller_callback_method_name, true)
-        __send__(action_callback_method_name)     if respond_to?(action_callback_method_name, true)
+        if respond_to?(controller_callback_method_name, true)
+          warn "[DEPRECATION] Using Sweeper for controller callback is deprecated. Sweeper is just an observer of ActiveRecord object that gets triggered when specified controller action is executed"
+          __send__(controller_callback_method_name)
+        end
+
+        if respond_to?(action_callback_method_name, true)
+          warn "[DEPRECATION] Using Sweeper for controller callback is deprecated. Sweeper is just an observer of ActiveRecord object that gets triggered when specified controller action is executed"
+          __send__(action_callback_method_name)
+        end
       end
 
       def method_missing(method, *arguments, &block)
