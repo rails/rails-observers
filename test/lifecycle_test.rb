@@ -118,7 +118,7 @@ class AroundTopicObserver < ActiveRecord::Observer
   end
 end
 
-class LifecycleTest < ActiveRecord::TestCase
+class LifecycleTest < ActiveSupport::TestCase
   fixtures :topics, :developers, :minimalistics
 
   def test_before_destroy

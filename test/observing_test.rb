@@ -32,6 +32,16 @@ end
 class ObservingTest < ActiveModel::TestCase
   def setup
     ObservedModel.observers.clear
+    FooObserver.singleton_class.instance_eval do
+      alias_method :original_observed_classes, :observed_classes
+    end
+  end
+
+  def teardown
+    FooObserver.singleton_class.instance_eval do
+      undef_method :observed_classes
+      alias_method :observed_classes, :original_observed_classes
+    end
   end
 
   test "initializes model with no cached observers" do
