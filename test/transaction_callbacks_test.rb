@@ -1,6 +1,6 @@
 require "helper"
 
-class TransactionCallbacksTest < ActiveRecord::TestCase
+class TransactionCallbacksTest < ActiveSupport::TestCase
   self.use_transactional_fixtures = false
   fixtures :topics
 

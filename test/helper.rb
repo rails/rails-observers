@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require 'active_record'
-
+require 'rails'
 require 'rails/observers/activerecord/active_record'
 
 FIXTURES_ROOT = File.expand_path(File.dirname(__FILE__)) + "/fixtures"
@@ -67,8 +67,4 @@ class Developer < ActiveRecord::Base
 end
 
 class Minimalistic < ActiveRecord::Base
-end
-
-ActiveSupport::Deprecation.silence do
-  require 'active_record/test_case'
 end
