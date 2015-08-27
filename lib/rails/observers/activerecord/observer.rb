@@ -96,11 +96,6 @@ module ActiveRecord
 
     protected
 
-      def observed_classes
-        klasses = super
-        klasses + klasses.map { |klass| klass.descendants }.flatten
-      end
-
       def add_observer!(klass)
         super
         define_callbacks klass
