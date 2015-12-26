@@ -8,10 +8,13 @@ FIXTURES_ROOT = File.expand_path(File.dirname(__FILE__)) + "/fixtures"
 class ActiveSupport::TestCase
   include ActiveRecord::TestFixtures
 
+  self.test_order = :sorted
   self.fixture_path = FIXTURES_ROOT
   self.use_instantiated_fixtures  = false
   self.use_transactional_fixtures = true
 end
+
+ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 ActiveRecord::Base.configurations = { "test" => { adapter: 'sqlite3', database: ':memory:' } }
 ActiveRecord::Base.establish_connection(:test)
@@ -33,7 +36,7 @@ ActiveRecord::Schema.define do
     t.string   :parent_title
     t.string   :type
     t.string   :group
-    t.timestamps
+    t.timestamps :null => false
   end
 
   create_table :comments do |t|
