@@ -6,10 +6,8 @@ module Rails
       initializer "active_record.observer", :before => "active_record.set_configs" do |app|
         ActiveSupport.on_load(:active_record) do
           require "rails/observers/activerecord/active_record"
-
-          if observers = app.config.respond_to?(:active_record) && app.config.active_record.delete(:observers)
-            send :observers=, observers
-          end
+          observers = app.config.active_record.delete(:observers)
+          self.observers = observers if observers
         end
       end
 
@@ -21,8 +19,6 @@ module Rails
 
       config.after_initialize do |app|
         ActiveSupport.on_load(:active_record) do
-          ActiveRecord::Base.instantiate_observers
-
           ActionDispatch::Reloader.to_prepare do
             ActiveRecord::Base.instantiate_observers
           end

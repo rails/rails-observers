@@ -14,7 +14,11 @@ class SweeperTestController < ActionController::Base
   cache_sweeper :app_sweeper
 
   def show
-    render text: 'hello world'
+    if Rails.version_matches?('>= 5.0.0.beta1')
+      render plain: 'hello world'
+    else
+      render text: 'hello world'
+    end
   end
 
   def error
@@ -75,8 +79,16 @@ class SweeperTest < ActionController::TestCase
 
   def test_process(controller, action = "show")
     @controller = controller.is_a?(Class) ? controller.new : controller
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
+    if ActionController::TestRequest.respond_to?(:create)
+      @request    = ActionController::TestRequest.create
+    else
+      @request    = ActionController::TestRequest.new
+    end
+    if ActionController.constants.include?(:TestResponse)
+      @response   = ActionController::TestResponse.new
+    else
+      @response   = ActionDispatch::TestResponse.new
+    end
 
     process(action)
   end

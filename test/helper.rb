@@ -1,16 +1,33 @@
 require 'minitest/autorun'
+require 'mocha/mini_test'
 require 'active_record'
 require 'rails'
 require 'rails/observers/activerecord/active_record'
 
 FIXTURES_ROOT = File.expand_path(File.dirname(__FILE__)) + "/fixtures"
 
+module Rails
+  class << self
+    def version_matches?(requirement_str)
+      ver = Gem::Version.new(version)
+      req = Gem::Requirement.new(requirement_str)
+      req.satisfied_by?(ver)
+    end
+  end
+end
+
 class ActiveSupport::TestCase
   include ActiveRecord::TestFixtures
 
+  self.test_order = :random if self.respond_to?(:test_order=)
   self.fixture_path = FIXTURES_ROOT
   self.use_instantiated_fixtures  = false
-  self.use_transactional_fixtures = true
+  self.use_transactional_fixtures = true if Rails.version_matches?('~> 4.0')
+  self.use_transactional_tests = true if self.respond_to?(:use_transactional_tests=)
+end
+
+if ActiveRecord::Base.respond_to?(:raise_in_transactional_callbacks=) && Rails.version_matches?('~> 4.0')
+  ActiveRecord::Base.raise_in_transactional_callbacks = true
 end
 
 ActiveRecord::Base.configurations = { "test" => { adapter: 'sqlite3', database: ':memory:' } }
@@ -33,7 +50,7 @@ ActiveRecord::Schema.define do
     t.string   :parent_title
     t.string   :type
     t.string   :group
-    t.timestamps
+    t.timestamps :null => false
   end
 
   create_table :comments do |t|
