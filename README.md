@@ -101,7 +101,7 @@ class ListSweeper < ActionController::Caching::Sweeper
 end
 ```
 
-The sweeper is assigned in the controllers that wish to have its' job performed using the `cache_sweeper` class method:
+The sweeper is assigned in the controllers that wish to have its job performed using the `cache_sweeper` class method:
 
 ```ruby
 class ListsController < ApplicationController
