@@ -100,7 +100,7 @@ class ObservingTest < ActiveModel::TestCase
   test "passes observers to subclasses" do
     FooObserver.instance
     bar = Class.new(Foo)
-    assert_equal Foo.observers_count, bar.observers_count
+    assert_equal [Foo, bar], FooObserver.observed_classes
   end
 end
 
@@ -124,26 +124,26 @@ class ObserverTest < ActiveModel::TestCase
   end
 
   test "tracks implicit observable models" do
-    instance = FooObserver.new
-    assert_equal [Foo], instance.observed_classes
+    FooObserver.instance
+    assert_equal [Foo], FooObserver.observed_classes
   end
 
   test "tracks explicit observed model class" do
     FooObserver.observe ObservedModel
-    instance = FooObserver.new
-    assert_equal [ObservedModel], instance.observed_classes
+    FooObserver.instance
+    assert_equal [ObservedModel], FooObserver.observed_classes
   end
 
   test "tracks explicit observed model as string" do
     FooObserver.observe 'observed_model'
-    instance = FooObserver.new
-    assert_equal [ObservedModel], instance.observed_classes
+    FooObserver.instance
+    assert_equal [ObservedModel], FooObserver.observed_classes
   end
 
   test "tracks explicit observed model as symbol" do
     FooObserver.observe :observed_model
-    instance = FooObserver.new
-    assert_equal [ObservedModel], instance.observed_classes
+    FooObserver.instance
+    assert_equal [ObservedModel], FooObserver.observed_classes
   end
 
   test "calls existing observer event" do

@@ -338,7 +338,10 @@ module ActiveModel
     # Start observing the declared classes and their subclasses.
     # Called automatically by the instance method.
     def initialize #:nodoc:
-      observed_classes.each { |klass| add_observer!(klass) }
+      klasses = observed_classes
+      klasses = (klasses + klasses.map(&:descendants).flatten).uniq
+      self.class.observe(klasses)
+      klasses.each { |klass| add_observer!(klass) }
     end
 
     def observed_classes #:nodoc:
