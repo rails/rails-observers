@@ -6,6 +6,8 @@ require 'rails/all'
 require 'rails/generators'
 require 'rails/generators/test_case'
 
+ActiveSupport.test_order = :random if ActiveSupport.respond_to?(:test_order=)
+
 module TestApp
   class Application < Rails::Application
   end

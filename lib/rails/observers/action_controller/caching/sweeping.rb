@@ -39,9 +39,9 @@ module ActionController #:nodoc:
             sweeper_instance = (sweeper.is_a?(Symbol) ? Object.const_get(sweeper.to_s.classify) : sweeper).instance
 
             if sweeper_instance.is_a?(Sweeper)
-              around_filter(sweeper_instance, :only => configuration[:only])
+              around_action(sweeper_instance, :only => configuration[:only])
             else
-              after_filter(sweeper_instance, :only => configuration[:only])
+              after_action(sweeper_instance, :only => configuration[:only])
             end
           end
         end
