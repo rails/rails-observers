@@ -25,6 +25,8 @@ module ApplicationTests
 
         assert_equal "0", `bundle exec rails r "puts User.count"`.strip
 
+        assert_equal "1", `bundle exec rails r "puts User.observers_count"`.strip
+
         app_file "lib/tasks/count_user.rake", <<-RUBY
           namespace :user do
             task :count => :environment do
