@@ -115,5 +115,5 @@ Module.new do
   FileUtils.rm_rf(app_template_path)
   FileUtils.mkdir(app_template_path)
 
-  `rails new #{app_template_path} --skip-gemfile`
+  `rails new #{app_template_path} --skip-gemfile --skip-listen`
 end
