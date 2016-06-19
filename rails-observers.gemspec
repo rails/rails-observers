@@ -15,6 +15,8 @@ Gem::Specification.new do |s|
   s.executables   = []
   s.require_paths = ["lib"]
 
+  s.required_ruby_version = '>= 2.2.2'
+
   s.add_dependency 'activemodel', '>= 4.0', '< 5.1'
 
   s.add_development_dependency 'minitest',     '>= 3'
