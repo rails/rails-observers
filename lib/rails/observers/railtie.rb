@@ -17,6 +17,14 @@ module Rails
         end
       end
 
+      initializer "active_resource.observer" do |app|
+        ActiveSupport.on_load(:active_resourse) do
+          require 'rails/observers/active_resource/observing'
+
+          prepend ActiveResource::Observing
+        end
+      end
+
       config.after_initialize do |app|
         ActiveSupport.on_load(:active_record) do
           # Rails 5.1 forward-compat. AD::R is deprecated to AS::R in Rails 5.
