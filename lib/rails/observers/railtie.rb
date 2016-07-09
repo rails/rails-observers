@@ -18,7 +18,7 @@ module Rails
       end
 
       initializer "active_resource.observer" do |app|
-        ActiveSupport.on_load(:active_resourse) do
+        ActiveSupport.on_load(:active_resource) do
           require 'rails/observers/active_resource/observing'
 
           prepend ActiveResource::Observing
@@ -35,7 +35,7 @@ module Rails
         end
 
         ActiveSupport.on_load(:active_resource) do
-          ActiveResource::Base.instantiate_observers
+          self.instantiate_observers
 
           # Rails 5.1 forward-compat. AD::R is deprecated to AS::R in Rails 5.
           reloader = defined?(ActiveSupport::Reloader) ? ActiveSupport::Reloader : ActionDispatch::Reloader
