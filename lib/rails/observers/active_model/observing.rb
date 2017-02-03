@@ -1,9 +1,8 @@
+require 'set'
 require 'singleton'
 require 'rails/observers/active_model/observer_array'
-require 'active_support/core_ext/module/aliasing'
 require 'active_support/core_ext/module/remove_method'
 require 'active_support/core_ext/string/inflections'
-require 'active_support/core_ext/enumerable'
 require 'active_support/core_ext/object/try'
 require 'active_support/descendants_tracker'
 
@@ -13,7 +12,11 @@ module ActiveModel
     extend ActiveSupport::Concern
 
     included do
-      extend ActiveSupport::DescendantsTracker
+      extend ::ActiveSupport::DescendantsTracker
+      def self.inherited(subclass)
+        super
+        subclass.observer_orm.instantiate_observers
+      end
     end
 
     module ClassMethods
@@ -74,7 +77,7 @@ module ActiveModel
       #
       #   Foo.observer_instances # => [#<FooObserver:0x007fc212c40820>]
       def observer_instances
-        @observer_instances ||= []
+        @observer_instances ||= Set.new
       end
 
       # Instantiate the global observers.
@@ -174,6 +177,17 @@ module ActiveModel
         msg = "count_observers is deprecated in favor of observers_count"
         ActiveSupport::Deprecation.warn(msg)
         observers_count
+      end
+
+      # Inheritable, read-only, lazily-determined, memoized class variable reader
+      # referring to the Active.*::Base class that included ::ActiveModel::Observing
+      def observer_orm #:nodoc:#
+        @@observer_orm ||= begin
+          self_and_parents = self.parents.unshift(self)
+          self_and_parents.detect do |klass|
+            klass.included_modules.include?(::ActiveModel::Observing)
+          end
+        end
       end
 
       protected
