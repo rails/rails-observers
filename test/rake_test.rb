@@ -1,5 +1,5 @@
 require 'isolation/abstract_unit'
-require 'rails-observers'
+require 'rails/observers'
 
 module ApplicationTests
   class RakeTest < ActiveSupport::TestCase

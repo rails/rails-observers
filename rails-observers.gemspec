@@ -8,11 +8,12 @@ Gem::Specification.new do |s|
   s.description = %q{Rails observer (removed from core in Rails 4.0)}
   s.summary     = %q{ActiveModel::Observer, ActiveRecord::Observer and ActionController::Caching::Sweeper extracted from Rails.}
   s.homepage    = "https://github.com/rails/rails-observers"
-  s.version     = Rails::Observers::VERSION
+  s.version     = Rails::Observers::Version.to_s
   s.license     = 'MIT'
 
   s.files         = Dir["LICENSE", "README.md", "lib/**/*"]
-  s.require_paths = ["lib"]
+  s.require_paths = [ 'lib' ]
+  s.autorequire   = [ 'rails/observers' ]
 
   s.required_ruby_version = '>= 2.2.2'
 

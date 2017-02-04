@@ -1,5 +1,4 @@
-require 'set'
-
+require 'active_model'
 module ActiveModel
   # Stores the enabled/disabled state of individual observers for
   # a particular model class.

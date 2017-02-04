@@ -1,3 +1,5 @@
+require 'action_controller'
+require 'action_controller/caching'
 module ActionController #:nodoc:
   module Caching
     # Sweepers are the terminators of the caching world and responsible for expiring caches when model objects change.
@@ -35,7 +37,7 @@ module ActionController #:nodoc:
           configuration = sweepers.extract_options!
 
           sweepers.each do |sweeper|
-            ActiveRecord::Base.observers << sweeper if defined?(ActiveRecord) and defined?(ActiveRecord::Base)
+            ::ActiveRecord::Base.observers << sweeper
             sweeper_instance = (sweeper.is_a?(Symbol) ? Object.const_get(sweeper.to_s.classify) : sweeper).instance
 
             if sweeper_instance.is_a?(Sweeper)
@@ -46,10 +48,6 @@ module ActionController #:nodoc:
           end
         end
       end
-    end
-
-    if defined?(ActiveRecord) and defined?(ActiveRecord::Observer)
-      require 'rails/observers/action_controller/caching/sweeper'
     end
   end
 end

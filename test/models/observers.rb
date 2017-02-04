@@ -1,6 +1,5 @@
 class ORM
   include ActiveModel::Observing
-
   def save
     notify_observers :before_save
   end

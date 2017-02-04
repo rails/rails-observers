@@ -1,8 +1,7 @@
 require 'minitest/autorun'
-require 'action_controller'
 require 'active_record'
-require 'rails/observers/activerecord/active_record'
-require 'rails/observers/action_controller/caching'
+require 'action_controller'
+require 'rails/observers'
 
 SharedTestRoutes = ActionDispatch::Routing::RouteSet.new
 
@@ -31,7 +30,7 @@ class SweeperTest < ActionController::TestCase
     @routes = SharedTestRoutes
 
     @routes.draw do
-      get ':controller(/:action)'
+      get 'sweeper_test/show'
     end
 
     super
