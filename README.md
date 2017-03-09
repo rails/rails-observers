@@ -21,7 +21,9 @@ Or install it yourself as:
 
 This gem contains two observers:
 
+* Active Model Observer
 * Active Record Observer
+* Active Resource Observer
 * Action Controller Sweeper
 
 ### Active Record Observer
