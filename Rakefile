@@ -2,20 +2,39 @@
 require "rubygems"
 require "bundler/setup"
 require "bundler/gem_tasks"
+Bundler.require(:default, :development, :test)
 
 require 'rake/testtask'
+Rake.load_rakefile 'rails/tasks/annotations.rake'
 
-Rake::TestTask.new("test:regular") do |t|
-  t.libs = ["test"]
-  t.pattern = "test/*_test.rb"
-  t.ruby_opts = ['-w']
+# Simplify debugging greatly by not running tests
+# in separate process
+namespace :test do
+  desc 'Regular unit tests'
+  task :regular do
+    $:.unshift File.expand_path('../test', __FILE__)
+    $VERBOSE = true
+    Dir['test/*_test.rb'].each do |file|
+      Object.instance_exec(file) do |test|
+        require_relative(test)
+      end
+    end
+  end
+
+  desc 'Test generators'
+  task :generators do
+    $:.unshift File.expand_path('../test', __FILE__)
+    $VERBOSE = true
+    Dir['test/generators/*_test.rb'].each do |file|
+      Object.instance_exec(file) do |test|
+        require_relative(test)
+      end
+    end
+  end
+
+  desc 'All unit tests'
+  task :all => [ :regular, :generators ]
 end
 
-Rake::TestTask.new("test:generators") do |t|
-  t.libs = ["test"]
-  t.pattern = "test/generators/*_test.rb"
-  t.ruby_opts = ['-w']
-end
-
+task :test => 'test:all'
 task :default => :test
-task :test => ['test:regular', 'test:generators']

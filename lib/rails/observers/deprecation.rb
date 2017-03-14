@@ -1,4 +1,5 @@
 require 'active_support/deprecation'
+require 'active_support/backtrace_cleaner'
 module Rails
   module Observers
     module Deprecation
@@ -9,6 +10,7 @@ module Rails
             singleton_class.prepend ::Rails::Observers::Deprecation::Methods
           end
           #klass.prepend ::Rails::Observers::Deprecation::Methods
+          #TODO: Add backtrace cleaner
         end
 
         def warn(message, callstack = nil)

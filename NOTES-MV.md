@@ -1,3 +1,8 @@
+## Strategy
+- [ ] Upon setting up observers, instantiate them, but don't rush to load the classes they observe. instead, hook into those by monitoring the inherit callbacks of `Active*::Base`
+  - [ ] This means observers specify their classes with symbols or strings. *NOT* constants.
+- [ ] ObserverArray should *only* store Observer instances. No need to store observer classes at all. (Can create a delegator to helpful methods in the class.)
+
 ## TODO
 - [ ] Probably a better idea to change functionality since this is a major version change rather than have deprecators strewn all over the place.
 - [ ] I have a strong bias for `prepend` nowadays. Check to see if when I use `prepend` it's really preferable over `include`/`extend`.
@@ -8,10 +13,10 @@
 - [ ] Cause deprecator to raise errors in testing mode.
 - [ ] Add tests for any new functionality you write
 
-## Strategy
-- [ ] Upon setting up observers, instantiate them, but don't rush to load the classes they observe. instead, hook into those by monitoring the inherit callbacks of `Active*::Base`
-  - [ ] This means observers specify their classes with symbols or strings. *NOT* constants.
-- [ ] ObserverArray should *only* store Observer instances. No need to store observer classes at all. (Can create a delegator to helpful methods in the class.)
+## Summary of Changes
+- Added Bundler confifiguration setting to make `:github` source in `Gemfile` use `HTTPS`. (Was triggering warning with latest Bundler.)
+- Restructured directories and code locations so that it would make intuitive sense (and also so that code would be compatible with autoloaders without manual `require`s or additional configuration).
+- Removed reliance on `rails` and `railties` gems.
 
 ## Stack Trace
 - `activesupport-5.0.1/lib/active_support/dependencies.rb:509` in `load_missing_constant`: Circular dependency detected while autoloading constant `User` (`RuntimeError`)
@@ -78,8 +83,3 @@
   - from `railties-5.0.1/lib/rails/commands.rb:18` in <top (`require`d)>
   - from `bin/rails:4` in `require`
   - from `bin/rails:4` in `<main>`
-
-## Summary of Changes
-- Added Bundler confifiguration setting to make `:github` source in `Gemfile` use `HTTPS`. (Was triggering warning with latest Bundler.)
-- Restructured directories and code locations so that it would make intuitive sense (and also so that code would be compatible with autoloaders without manual `require`s or additional configuration).
-- Removed reliance on `rails` and `railties` gems.

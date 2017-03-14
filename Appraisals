@@ -15,7 +15,6 @@
     end
     gem 'mocha', :require => false
     gemspec
-
   end
 end
 
