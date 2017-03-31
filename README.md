@@ -6,9 +6,9 @@ Rails Observers (removed from core in Rails 4.0)
 ## Installation
 
 Add this line to your application's Gemfile:
-
-    gem 'rails-observers'
-
+```ruby
+gem 'rails-observers'
+```
 And then execute:
 
     $ bundle
