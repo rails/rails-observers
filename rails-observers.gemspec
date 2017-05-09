@@ -16,13 +16,13 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.2.2'
 
-  s.add_dependency 'activemodel', '>= 4.0', '< 6.0'
+  s.add_dependency 'activemodel', '>= 4.0'
 
   s.add_development_dependency 'minitest',     '>= 3'
-  s.add_development_dependency 'railties',     '>= 4.0', '< 6.0'
-  s.add_development_dependency 'activerecord', '>= 4.0', '< 6.0'
-  s.add_development_dependency 'actionmailer', '>= 4.0', '< 6.0'
-  s.add_development_dependency 'actionpack',   '>= 4.0', '< 6.0'
-  s.add_development_dependency 'activeresource', '>= 4.0', '< 6.0'
-  s.add_development_dependency 'sqlite3',      '~> 1.3'
+  s.add_development_dependency 'railties',     '>= 4.0'
+  s.add_development_dependency 'activerecord', '>= 4.0'
+  s.add_development_dependency 'actionmailer', '>= 4.0'
+  s.add_development_dependency 'actionpack',   '>= 4.0'
+  s.add_development_dependency 'activeresource', '>= 4.0'
+  s.add_development_dependency 'sqlite3',      '=> 1.3'
 end
