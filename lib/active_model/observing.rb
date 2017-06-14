@@ -5,26 +5,27 @@ module ActiveModel
     extend ActiveSupport::Autoload
     autoload :ClassMethods
     autoload :InstanceMethods
+    autoload :DeferredModelLoader
+
     class << self
+
       def prepend_features(klass)
+        klass.mattr_reader(:observer_orm) { self }
         class << klass
           include ::ActiveSupport::DescendantsTracker
           prepend ::ActiveModel::Observing::ClassMethods
         end
-        klass.mattr_reader :observer_orm { klass }
+
         klass.prepend ::ActiveModel::Observing::InstanceMethods
         add_instantiation_hooks!(klass)
       end
-      # Previously, people called include ActiveModel::Observing
-      # so let's be backwards compatible
-      alias_method :append_features, :prepend_features
 
     private
-      
+
       def add_instantiation_hooks!(klass)
         @@reloader_class = begin
-          ::ActiveSupport::Reloader 
-        rescue NameError 
+          ::ActiveSupport::Reloader
+        rescue NameError
           ::ActionDispatch::Reloader
         end
         ActiveSupport.on_load :after_initialize, :yield => true do
@@ -34,6 +35,7 @@ module ActiveModel
           end
         end
       end
+
     end
   end
 end

@@ -2,7 +2,7 @@ require 'active_record'
 module ActiveRecord
   module Observing
     def self.prepended(klass)
-      klass.include ActiveModel::Observing
+      klass.prepend ActiveModel::Observing
     end
   end
 end

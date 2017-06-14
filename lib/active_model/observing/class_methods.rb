@@ -4,10 +4,11 @@ module ActiveModel
       prepend Rails::Observers::Deprecation
       def inherited(subclass)
         super
-        subclass.observer_orm.instantiate_observers
-        notify_observers :observed_class_inherited, subclass
+        #TODO: uncomment
+        #subclass.observer_orm.instantiate_observers
+        #notify_observers :observed_class_inherited, subclass
       end
-      
+
       # Activates the observers assigned.
       #
       #   class ORM

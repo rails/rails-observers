@@ -35,8 +35,8 @@ module ActiveModel
   # <tt>ProductManagerObserver</tt> to <tt>ProductManager</tt>, and so on. If
   # you want to name your observer differently than the class you're interested
   # in observing, you can use the <tt>Observer.observe</tt> class method which
-  # takes either the concrete class (<tt>Product</tt>) or a symbol for that
-  # class (<tt>:product</tt>):
+  # takes either a string or a symbol containing the name of that class
+  # (<tt>:product</tt>):
   #
   #   class AuditObserver < ActiveModel::Observer
   #     observe :account
@@ -65,63 +65,83 @@ module ActiveModel
   # ActiveRecord::Observer.
   class Observer
     include Singleton
-    prepend Rails::Observers::Deprecation
+    include Rails::Observers::Deprecation
     extend ActiveSupport::DescendantsTracker
 
     class << self
-      # Attaches the observer to the supplied model classes.
+      # Attaches the observer to the supplied model class names.
       #
       #   class AuditObserver < ActiveModel::Observer
-      #     observe :account, :balance
+      #     observe 'Account', 'Balance'
       #   end
-      #
-      #   AuditObserver.observed_classes # => [Account, Balance]
       def observe(*models)
-        models.flatten!
-        models.collect! { |model| model.respond_to?(:to_sym) ? model.to_s.camelize.constantize : model }
-        singleton_class.redefine_method(:observed_classes) { models }
+        instance.observees = models
       end
-
-      # Returns an array of Classes to observe.
-      #
-      #   AccountObserver.observed_classes # => [Account]
-      #
-      # You can override this instead of using the +observe+ helper.
-      #
-      #   class AuditObserver < ActiveModel::Observer
-      #     def self.observed_classes
-      #       [Account, Balance]
-      #     end
-      #   end
-      def observed_classes
-        unless defined?(@observed_classes)
-          @observed_classes = Set.new
-          @observed_classes << default_observed_class if default_observed_class
-          @observed_classes.freeze
-        end
-        @observed_classes
-      end
-
-      # Returns the class observed by default. It's inferred from the observer's
-      # class name.
-      #
-      #   PersonObserver.default_observed_class  # => Person
-      #   AccountObserver.default_observed_class # => Account
-      def default_observed_class
-        return @default_observed_class if defined?(@default_observed_class)
-        @default_observed_class = self.name.sub!(/Observer\z/, '').try(:safe_constantize)
-      end
-      deprecated_alias_method :observed_class, :default_observed_class
     end
-
-    delegate :observed_classes, :to => :class
 
     # Start observing the declared classes and their subclasses.
     # Called automatically by the instance method.
-    def initialize #:nodoc:
-      observed_classes.each { |klass| add_observer!(klass) }
+    def initialize
+      @observees = ObserveeSet.new(self)
+      @default_observee = self.class.name.sub!(/Observer\z/, '').freeze
+      observees << default_observee if default_observee?
     end
 
+    # Returns an array of names of classes to observe.
+    #
+    #   AccountObserver.observees # => [:account]
+    #
+    # By default, the observed class name is obtained by removing 'Observer' from
+    # from the end of the observer's name. If the observer's class name doesn't end
+    # in 'Observer', no class is observed by default.
+
+
+    # Attaches the observer to the supplied model class names.
+    #
+    #   AuditObserver.observees = [ 'Account', 'Balance' ]
+    attr_reader :observees
+    def observees=(models)
+      observees.replace(models)
+    end
+
+    # Attaches the observer to a new model class *without* removing the previous ones.
+    def observe!(klass)
+      observees << klass.is_a?(String) ? klass : klass.name
+    end
+
+    # Returns an array of observed models (as strings), both those that are being observed,
+    # and those that will be once they are loaded
+    #
+    #   AuditObserver.observed_classes # => [ 'Account', 'Balance' ]
+    def observed_classes
+      observees.all.map(&:model_name).freeze
+    end
+
+    # Returns an array of observed models (as strings) that are loaded.
+    #
+    #   AuditObserver.loaded_observed_classes # => [ 'Account', 'Balance' ]
+    def loaded_observed_classes
+      observees.loaded.map(&:model_name).freeze
+    end
+
+    # Returns an array of as-of-yet unloaded models (as strings) that will be observed.
+    #
+    #   AuditObserver.pending_observed_classes # => [ 'Account', 'Balance' ]
+    def pending_observed_classes
+      observees.pending.map(&:model_name).freeze
+    end
+
+
+    # Returns the class (if any) observed by default. It's inferred from the observer's
+    # class name and obtained by simply removing the word 'Observer' from the end (if present).
+    #
+    #   PersonObserver.default_observee  # => Person
+    #   AccountObserver.default_observee # => Account
+    attr_reader :default_observee
+    attr_predicate :default_observee
+
+    # TODO: Add a method_added callback to watch that no one redefines observed_class(es) and
+    # raise fire a deprecation error if so.
 
     # Send observed_method(object) if the method exists and
     # the observer is enabled for the given object's class.
@@ -133,17 +153,13 @@ module ActiveModel
     # Special method sent by the observed class when it is inherited.
     # Passes the new subclass.
     def observed_class_inherited(subclass) #:nodoc:
-      self.class.observe(observed_classes + [subclass])
-      add_observer!(subclass)
+      observed_classes << subclass
+      observer!(subclass)
     end
 
   protected
-    def add_observer!(klass) #:nodoc:
-      klass.add_observer(self)
-    end
-
     # Returns true if notifications are disabled for this object.
-    def disabled_for?(object) #:nodoc:
+    def disabled_for?(object)
       klass = object.class
       return false unless klass.respond_to?(:observers)
       klass.observers.disabled_for?(self)

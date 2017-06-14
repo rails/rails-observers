@@ -1,22 +1,35 @@
-## Strategy
+## TODO
+- [ ] Implement `#instantiate_observers`
+- [x] New structure to replace ObserverArray
+  - [ ] Each ORM (i.e. `ActiveRecord::Base`) will have a class method `#pending_observees` returning a array of all fully-qualified model names (as strings) to begin observing upon inheritance.
+  - [ ] Each ORM observer class (i.e. `ActiveRecord::Observer`) will have a class method (`#descendant_instances`) returning an array of all observers (objects).
+  - [ ] Each observer will have an `#current_observees` class method which will return an array (of strings) the models the observer observes.
+  - [ ] Each model will have an `#observers` class method which will obtain an array of observer objects observing the model.
+- [x] Only strings can be 'observed'. (Anything that responds to #to_s is converted. Warnings are raised for Classes.)
 - [ ] Upon setting up observers, instantiate them, but don't rush to load the classes they observe. instead, hook into those by monitoring the inherit callbacks of `Active*::Base`
-  - [ ] This means observers specify their classes with symbols or strings. *NOT* constants.
+  - [x] This means observers specify their classes with symbols or strings. *NOT* constants.
 - [ ] ObserverArray should *only* store Observer instances. No need to store observer classes at all. (Can create a delegator to helpful methods in the class.)
 
-## TODO
+## Checks
 - [ ] Probably a better idea to change functionality since this is a major version change rather than have deprecators strewn all over the place.
 - [ ] I have a strong bias for `prepend` nowadays. Check to see if when I use `prepend` it's really preferable over `include`/`extend`.
-- [ ] Document all changes (especially non-breaking ones).
+- [ ] Document all changes (especially backward-incompatible ones).
+- [ ] Make sure documentation is pretty and where it belongs.
 - [ ] Optimize autoloading, etc. (Perhaps last?)
 - [ ] Writeup upgrade instructions (noting backwards-incompatible changes).
   - [ ] Perhaps write an upgrade generator(?)
-- [ ] Cause deprecator to raise errors in testing mode.
+- [ ] Cause deprecator to raise errors in testing mode. (Fix/complete it in general)
+- [ ] Confirm bootstrapper works for non-rails.
+- [ ] Make sure enablement is working (I'm pretty sure I broke it)
+- [ ] Make sure I didn't break anything that was threadsafe
 - [ ] Add tests for any new functionality you write
+- [ ] Check for all TODOs, FIXMEs, etc
 
 ## Summary of Changes
 - Added Bundler confifiguration setting to make `:github` source in `Gemfile` use `HTTPS`. (Was triggering warning with latest Bundler.)
 - Restructured directories and code locations so that it would make intuitive sense (and also so that code would be compatible with autoloaders without manual `require`s or additional configuration).
 - Removed reliance on `rails` and `railties` gems.
+- You can no longer redefine the method #observed_classes in ActiveModel::Observer subclasses. You can either use `observe :class` or `observed_classes = :class`
 
 ## Stack Trace
 - `activesupport-5.0.1/lib/active_support/dependencies.rb:509` in `load_missing_constant`: Circular dependency detected while autoloading constant `User` (`RuntimeError`)

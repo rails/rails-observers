@@ -1,6 +1,7 @@
 require 'byebug' if ENV.key?('BYEBUG')
 require 'active_support/all'
 require 'active_support/dependencies'
+require File.absolute_path('../../core_ext', __FILE__)
 
 module Rails
   module Observers
@@ -24,6 +25,7 @@ module ActiveModel
   extend ActiveSupport::Autoload
   autoload :ObserverArray
   autoload :Observer
+  autoload :ObserveeSet
   autoload :Observing
 end
 

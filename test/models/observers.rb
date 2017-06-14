@@ -23,4 +23,5 @@ class AuditTrail < ORM::Observer
   observe :widget, :budget
 end
 
-ORM.instantiate_observers
+# FIXME:
+# ORM.instantiate_observers
