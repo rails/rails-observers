@@ -30,7 +30,7 @@ if ActiveRecord::Base.respond_to?(:raise_in_transactional_callbacks=) && Rails.v
   ActiveRecord::Base.raise_in_transactional_callbacks = true
 end
 
-ActiveRecord::Base.configurations = { "test" => { adapter: 'sqlite3', database: ':memory:' } }
+ActiveRecord::Base.configurations = { 'test' => { 'adapter' => 'sqlite3', 'database' => ':memory:' } }
 ActiveRecord::Base.establish_connection(:test)
 
 ActiveRecord::Schema.verbose = false
