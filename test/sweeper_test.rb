@@ -1,6 +1,5 @@
-require 'minitest/autorun'
+require 'helper'
 require 'action_controller'
-require 'active_record'
 require 'rails/observers/activerecord/active_record'
 require 'rails/observers/action_controller/caching'
 
