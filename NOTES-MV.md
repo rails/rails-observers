@@ -1,0 +1,98 @@
+## TODO
+- [ ] Implement `#instantiate_observers`
+- [x] New structure to replace ObserverArray
+  - [ ] Each ORM (i.e. `ActiveRecord::Base`) will have a class method `#pending_observees` returning a array of all fully-qualified model names (as strings) to begin observing upon inheritance.
+  - [ ] Each ORM observer class (i.e. `ActiveRecord::Observer`) will have a class method (`#descendant_instances`) returning an array of all observers (objects).
+  - [ ] Each observer will have an `#current_observees` class method which will return an array (of strings) the models the observer observes.
+  - [ ] Each model will have an `#observers` class method which will obtain an array of observer objects observing the model.
+- [x] Only strings can be 'observed'. (Anything that responds to #to_s is converted. Warnings are raised for Classes.)
+- [ ] Upon setting up observers, instantiate them, but don't rush to load the classes they observe. instead, hook into those by monitoring the inherit callbacks of `Active*::Base`
+  - [x] This means observers specify their classes with symbols or strings. *NOT* constants.
+- [ ] ObserverArray should *only* store Observer instances. No need to store observer classes at all. (Can create a delegator to helpful methods in the class.)
+
+## Checks
+- [ ] Probably a better idea to change functionality since this is a major version change rather than have deprecators strewn all over the place.
+- [ ] I have a strong bias for `prepend` nowadays. Check to see if when I use `prepend` it's really preferable over `include`/`extend`.
+- [ ] Document all changes (especially backward-incompatible ones).
+- [ ] Make sure documentation is pretty and where it belongs.
+- [ ] Optimize autoloading, etc. (Perhaps last?)
+- [ ] Writeup upgrade instructions (noting backwards-incompatible changes).
+  - [ ] Perhaps write an upgrade generator(?)
+- [ ] Cause deprecator to raise errors in testing mode. (Fix/complete it in general)
+- [ ] Confirm bootstrapper works for non-rails.
+- [ ] Make sure enablement is working (I'm pretty sure I broke it)
+- [ ] Make sure I didn't break anything that was threadsafe
+- [ ] Add tests for any new functionality you write
+- [ ] Check for all TODOs, FIXMEs, etc
+
+## Summary of Changes
+- Added Bundler confifiguration setting to make `:github` source in `Gemfile` use `HTTPS`. (Was triggering warning with latest Bundler.)
+- Restructured directories and code locations so that it would make intuitive sense (and also so that code would be compatible with autoloaders without manual `require`s or additional configuration).
+- Removed reliance on `rails` and `railties` gems.
+- You can no longer redefine the method #observed_classes in ActiveModel::Observer subclasses. You can either use `observe :class` or `observed_classes = :class`
+
+## Stack Trace
+- `activesupport-5.0.1/lib/active_support/dependencies.rb:509` in `load_missing_constant`: Circular dependency detected while autoloading constant `User` (`RuntimeError`)
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:203` in `const_missing`
+  - from `activesupport-5.0.1/lib/active_support/inflector/methods.rb:268` in `const_get`
+  - from `activesupport-5.0.1/lib/active_support/inflector/methods.rb:268` in `block` in `constantize`
+  - from `activesupport-5.0.1/lib/active_support/inflector/methods.rb:266` in `each`
+  - from `activesupport-5.0.1/lib/active_support/inflector/methods.rb:266` in `inject`
+  - from `activesupport-5.0.1/lib/active_support/inflector/methods.rb:266` in `constantize`
+  - from `activesupport-5.0.1/lib/active_support/inflector/methods.rb:311` in `safe_constantize`
+  - from `activesupport-5.0.1/lib/active_support/core_ext/string/inflections.rb:77` in `safe_constantize`
+  - from `activesupport-5.0.1/lib/active_support/core_ext/object/try.rb:17` in `public_send`
+  - from `activesupport-5.0.1/lib/active_support/core_ext/object/try.rb:17` in `try!`
+  - from `activesupport-5.0.1/lib/active_support/core_ext/object/try.rb:6` in `try`
+  - from `rails-observers/lib/active_model/observer.rb:112` in `default_observed_class`
+  - from `rails-observers/lib/active_model/observer.rb:99` in `observed_classes`
+  - from `rails-observers/lib/active_model/observer.rb:117` in `observed_classes`
+  - from `rails-observers/lib/active_record/observer.rb:101` in `observed_classes`
+  - from `rails-observers/lib/active_model/observer.rb:122` in `initialize`
+  - from `/usr/local/rvm/rubies/ruby-2.4.0-rc1/lib/ruby/2.4.0/singleton.rb:142` in `new`
+  - from `/usr/local/rvm/rubies/ruby-2.4.0-rc1/lib/ruby/2.4.0/singleton.rb:142` in `block` in `instance`
+  - from `/usr/local/rvm/rubies/ruby-2.4.0-rc1/lib/ruby/2.4.0/singleton.rb:140` in `synchronize`
+  - from `/usr/local/rvm/rubies/ruby-2.4.0-rc1/lib/ruby/2.4.0/singleton.rb:140` in `instance`
+  - from `rails-observers/lib/active_model/observing/class_methods.rb:171` in `instantiate_observer`
+  - from `rails-observers/lib/active_model/observing/class_methods.rb:99` in `block` in `instantiate_observers`
+  - from `rails-observers/lib/active_model/observing/class_methods.rb:99` in `each`
+  - from `rails-observers/lib/active_model/observing/class_methods.rb:99` in `instantiate_observers`
+  - from `rails-observers/lib/active_model/observing/class_methods.rb:7` in `inherited`
+  - from `/tmp/test-app/app/models/application_record.rb:1` in <top (`require`d)>
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:477` in `load`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:477` in `block` in `load_file`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:662` in `new_constants_in`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:476` in `load_file`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:375` in `block` in `require_or_load`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:37` in `block` in `load_interlock`
+  - from `activesupport-5.0.1/lib/active_support/dependencies/interlock.rb:12` in `block in loading`
+  - from `activesupport-5.0.1/lib/active_support/concurrency/share_lock.rb:150` in `exclusive`
+  - from `activesupport-5.0.1/lib/active_support/dependencies/interlock.rb:11` in `loading`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:37` in `load_interlock`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:358` in `require_or_load`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:511` in `load_missing_constant`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:203` in `const_missing`
+  - from `/tmp/test-app/app/models/user.rb:1` in <top (`require`d)>
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:477` in `load`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:477` in `block in load_file`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:662` in `new_constants_in`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:476` in `load_file`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:375` in `block in require_or_load`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:37` in `block in load_interlock`
+  - from `activesupport-5.0.1/lib/active_support/dependencies/interlock.rb:12` in `block in loading`
+  - from `activesupport-5.0.1/lib/active_support/concurrency/share_lock.rb:150` in `exclusive`
+  - from `activesupport-5.0.1/lib/active_support/dependencies/interlock.rb:11` in `loading`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:37` in `load_interlock`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:358` in `require_or_load`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:511` in `load_missing_constant`
+  - from `activesupport-5.0.1/lib/active_support/dependencies.rb:203` in `const_missing`
+  - from `railties-5.0.1/lib/rails/commands/runner.rb:63` in <top (`require`d)>
+  - from `railties-5.0.1/lib/rails/commands/runner.rb:63` in `eval`
+  - from `railties-5.0.1/lib/rails/commands/runner.rb:63` in <top (`require`d)>
+  - from `railties-5.0.1/lib/rails/commands/commands_tasks.rb:138` in `require`
+  - from `railties-5.0.1/lib/rails/commands/commands_tasks.rb:138` in `require_command!`
+  - from `railties-5.0.1/lib/rails/commands/commands_tasks.rb:104` in `runner`
+  - from `railties-5.0.1/lib/rails/commands/commands_tasks.rb:49` in `run_command!`
+  - from `railties-5.0.1/lib/rails/commands.rb:18` in <top (`require`d)>
+  - from `bin/rails:4` in `require`
+  - from `bin/rails:4` in `<main>`

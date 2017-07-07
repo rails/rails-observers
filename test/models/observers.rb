@@ -1,6 +1,5 @@
 class ORM
   include ActiveModel::Observing
-
   def save
     notify_observers :before_save
   end
@@ -24,4 +23,5 @@ class AuditTrail < ORM::Observer
   observe :widget, :budget
 end
 
-ORM.instantiate_observers
+# FIXME:
+# ORM.instantiate_observers

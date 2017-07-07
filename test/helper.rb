@@ -2,7 +2,6 @@ require 'minitest/autorun'
 require 'mocha/mini_test'
 require 'active_record'
 require 'rails'
-require 'rails/observers/activerecord/active_record'
 
 FIXTURES_ROOT = File.expand_path(File.dirname(__FILE__)) + "/fixtures"
 

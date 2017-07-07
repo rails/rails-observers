@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require 'active_model'
-require 'rails/observers/active_model/active_model'
+require 'rails/observers'
 
 class ObservedModel
   include ActiveModel::Observing
@@ -120,30 +120,30 @@ class ObserverTest < ActiveModel::TestCase
   end
 
   test "guesses implicit observable model name" do
-    assert_equal Foo, FooObserver.observed_class
+    assert_equal Foo, FooObserver.default_observed_class
   end
 
   test "tracks implicit observable models" do
     instance = FooObserver.new
-    assert_equal [Foo], instance.observed_classes
+    assert_equal [Foo], instance.observed_classes.to_a
   end
 
   test "tracks explicit observed model class" do
     FooObserver.observe ObservedModel
     instance = FooObserver.new
-    assert_equal [ObservedModel], instance.observed_classes
+    assert_equal [ObservedModel], instance.observed_classes.to_a
   end
 
   test "tracks explicit observed model as string" do
     FooObserver.observe 'observed_model'
     instance = FooObserver.new
-    assert_equal [ObservedModel], instance.observed_classes
+    assert_equal [ObservedModel], instance.observed_classes.to_a
   end
 
   test "tracks explicit observed model as symbol" do
     FooObserver.observe :observed_model
     instance = FooObserver.new
-    assert_equal [ObservedModel], instance.observed_classes
+    assert_equal [ObservedModel], instance.observed_classes.to_a
   end
 
   test "calls existing observer event" do
@@ -185,9 +185,9 @@ class ObserverTest < ActiveModel::TestCase
       observe :foo
     end
 
-    assert_equal [Foo], BarObserver.observed_classes
+    assert_equal [Foo], BarObserver.observed_classes.to_a
 
     BarObserver.observe(ObservedModel)
-    assert_equal [ObservedModel], BarObserver.observed_classes
+    assert_equal [ObservedModel], BarObserver.observed_classes.to_a
   end
 end

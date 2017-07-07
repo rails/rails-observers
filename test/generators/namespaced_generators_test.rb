@@ -1,5 +1,5 @@
 require 'generators/generators_test_helper'
-require 'generators/rails/observer/observer_generator'
+require 'generators/observer_generator'
 
 class NamespacedObserverGeneratorTest < Rails::Generators::TestCase
   tests Rails::Generators::ObserverGenerator

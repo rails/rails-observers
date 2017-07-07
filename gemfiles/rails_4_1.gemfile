@@ -3,7 +3,8 @@
 source "https://rubygems.org"
 
 gem "appraisal"
+gem "rails", :github => "rails/rails", :branch => "4-1-stable"
+gem "activeresource", :github => "rails/activeresource", :branch => "4-stable"
 gem "mocha", :require => false
-gem "rails", "~> 4.1.0"
 
 gemspec :path => "../"

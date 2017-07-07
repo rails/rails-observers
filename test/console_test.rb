@@ -1,5 +1,5 @@
 require 'isolation/abstract_unit'
-require 'rails-observers'
+require 'rails/observers'
 
 class ConsoleTest < ActiveSupport::TestCase
   include ActiveSupport::Testing::Isolation

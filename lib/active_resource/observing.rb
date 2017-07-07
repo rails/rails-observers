@@ -1,9 +1,8 @@
-require 'rails/observers/active_model/observing'
-
+require 'active_resource'
 module ActiveResource
   module Observing
-    def self.prepended(context)
-      context.include ActiveModel::Observing
+    def self.prepended(klass)
+      klass.prepend ActiveModel::Observing
     end
 
     def create(*)

@@ -1,6 +1,8 @@
+require 'action_controller'
+require 'action_controller/caching'
 module ActionController #:nodoc:
   module Caching
-    class Sweeper < ActiveRecord::Observer #:nodoc:
+    class Sweeper < ::ActiveRecord::Observer #:nodoc:
       attr_accessor :controller
 
       def initialize(*args)
@@ -53,7 +55,7 @@ module ActionController #:nodoc:
       end
 
       def method_missing(method, *arguments, &block)
-        return super unless @controller
+        return super unless defined?(@controller) && @controller
         @controller.__send__(method, *arguments, &block)
       end
     end
