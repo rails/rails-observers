@@ -3,7 +3,7 @@ require 'active_model'
 require 'rails/observers/active_model/active_model'
 require 'models/observers'
 
-class ObserverArrayTest < ActiveModel::TestCase
+class ObserverArrayTest < ActiveSupport::TestCase
   def teardown
     ORM.observers.enable :all
     Budget.observers.enable :all
