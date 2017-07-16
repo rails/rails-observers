@@ -31,6 +31,7 @@ class SweeperTest < ActionController::TestCase
 
     @routes.draw do
       get 'sweeper_test/show'
+      get 'sweeper_test/error'
     end
 
     super
