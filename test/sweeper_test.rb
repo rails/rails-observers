@@ -30,7 +30,7 @@ class SweeperTest < ActionController::TestCase
     @routes = SharedTestRoutes
 
     @routes.draw do
-      get ':controller(/:action)'
+      get 'sweeper_test/show'
     end
 
     super
