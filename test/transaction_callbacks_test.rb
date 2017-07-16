@@ -1,8 +1,8 @@
 require "helper"
 
 class TransactionCallbacksTest < ActiveSupport::TestCase
-  self.use_transactional_fixtures = false if Rails.version.start_with?('4.0')
-  self.use_transactional_tests = false if respond_to?(:use_transactional_tests=)
+  self.use_transactional_fixtures = false if Rails.version_matches?('~> 4.0')
+  self.use_transactional_tests = false if self.respond_to?(:use_transactional_tests=)
   fixtures :topics
 
   class TopicWithCallbacks < ActiveRecord::Base
@@ -228,14 +228,14 @@ class TransactionCallbacksTest < ActiveSupport::TestCase
     @second.after_commit_block{|r| r.history << :after_commit}
     @second.after_rollback_block{|r| r.history << :after_rollback}
 
-    action_without_rollback = -> do
+    action_without_rollback = Proc.new do
       Topic.transaction do
         @first.save!
         @second.save!
       end
     end
 
-    if Rails.version >= '4.2'
+    if Rails.version_matches?('>= 4.2')
       assert_raises RuntimeError, &action_without_rollback
     else
       action_without_rollback.call
@@ -244,15 +244,14 @@ class TransactionCallbacksTest < ActiveSupport::TestCase
     assert_equal [:after_commit], @second.history
 
     @second.history.clear
-    action_with_rollback = -> do
+    action_with_rollback = Proc.new do
       Topic.transaction do
         @first.save!
         @second.save!
         raise ActiveRecord::Rollback
       end
     end
-
-    if Rails.version >= '4.2'
+    if Rails.version_matches?('>= 4.2')
       assert_raises RuntimeError, &action_with_rollback
       assert_equal :rollback, @first.last_after_transaction_error
       assert_equal [], @second.history
