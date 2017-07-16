@@ -13,7 +13,7 @@ class SweeperTestController < ActionController::Base
   cache_sweeper :app_sweeper
 
   def show
-    if Rails.version_matches?('>= 5.0.0.beta1')
+    if Rails.version >= '5.0'
       render plain: 'hello world'
     else
       render text: 'hello world'
