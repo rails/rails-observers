@@ -4,12 +4,14 @@ cache: bundler
 rvm:
   - 2.2.6
   - 2.3.1
-  - 2.4.0
+  - 2.4.1
   - ruby-head
 gemfile:
   - gemfiles/rails_4_0.gemfile
   - gemfiles/rails_4_1.gemfile
   - gemfiles/rails_4_2.gemfile
+  - gemfiles/rails_5.0.gemfile
+  - gemfiles/rails_master.gemfile
   - Gemfile
 matrix:
   exclude:
@@ -21,6 +23,7 @@ matrix:
     - rvm: ruby-head
     - rvm: 2.4.0
       gemfile: gemfiles/rails_4_2.gemfile
+    - gemfile: gemfiles/rails_master.gemfile
   fast_finish: true
 notifications:
   email: false
