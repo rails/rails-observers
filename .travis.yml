@@ -7,22 +7,13 @@ rvm:
   - 2.4.1
   - ruby-head
 gemfile:
-  - gemfiles/rails_4_0.gemfile
-  - gemfiles/rails_4_1.gemfile
   - gemfiles/rails_4_2.gemfile
   - gemfiles/rails_5_0.gemfile
   - gemfiles/rails_master.gemfile
   - Gemfile
 matrix:
-  exclude:
-    - rvm: 2.4.1
-      gemfile: gemfiles/rails_4_0.gemfile
-    - rvm: 2.4.1
-      gemfile: gemfiles/rails_4_1.gemfile
   allow_failures:
     - rvm: ruby-head
-    - rvm: 2.4.1
-      gemfile: gemfiles/rails_4_2.gemfile
     - gemfile: gemfiles/rails_master.gemfile
   fast_finish: true
 notifications:
