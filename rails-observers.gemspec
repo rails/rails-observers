@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activemodel', '>= 4.2'
 
-  s.add_development_dependency 'minitest',       '>= 3'
+  s.add_development_dependency 'minitest',       '>= 5'
   s.add_development_dependency 'railties',       '>= 4.2'
   s.add_development_dependency 'activerecord',   '>= 4.2'
   s.add_development_dependency 'actionmailer',   '>= 4.2'
