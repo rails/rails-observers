@@ -80,7 +80,11 @@ class SweeperTest < ActionController::TestCase
   def test_process(controller, action = "show")
     @controller = controller.is_a?(Class) ? controller.new : controller
     if ActionController::TestRequest.respond_to?(:create)
-      @request    = ActionController::TestRequest.create
+      if ActionController::TestRequest.method(:create).arity == 0
+        @request    = ActionController::TestRequest.create
+      else
+        @request    = ActionController::TestRequest.create @controller.class
+      end
     else
       @request    = ActionController::TestRequest.new
     end
