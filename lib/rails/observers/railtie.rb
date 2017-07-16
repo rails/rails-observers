@@ -26,7 +26,21 @@ module Rails
       end
 
       config.after_initialize do |app|
+        begin
+          # Eager load `ActiveRecord::Base` to avoid circular references when
+          # loading a constant for the first time.
+          #
+          # E.g. loading a `User` model that references `ActiveRecord::Base`
+          # which calls `instantiate_observers` to instantiate a `UserObserver`
+          # which eventually calls `observed_class` thus constantizing `"User"`,
+          # the class we're loading. 💣💥
+          require "active_record/base"
+        rescue LoadError
+        end
+
         ActiveSupport.on_load(:active_record) do
+          ActiveRecord::Base.instantiate_observers
+
           # Rails 5.1 forward-compat. AD::R is deprecated to AS::R in Rails 5.
           reloader = defined?(ActiveSupport::Reloader) ? ActiveSupport::Reloader : ActionDispatch::Reloader
           reloader.to_prepare do
