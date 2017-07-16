@@ -1,6 +1,0 @@
-source "https://rubygems.org"
-
-gem "mocha", require: false
-gem "rails", "~> 4.0.0"
-
-gemspec path: "../"
