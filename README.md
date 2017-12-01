@@ -81,6 +81,14 @@ For an observer to be active, it must be registered first. This can be done by a
 
     config.active_record.observers = :contact_observer
 
+Observers may also be registered automatically by assuming a naming convention or a directory. To automatically register all observers following the naming convention `*_observer.rb`, please add the following line into the `application.rb`:
+
+    config.active_record.observers = Dir.glob(Rails.root.join('app', 'models', '**', '*_observer.rb')).map {|file_path| File.basename(file_path, '.rb')}
+
+Alternatively, to automatically register all observers in the `app/observers` directory, please add the following line into the `application.rb`:
+
+    config.active_record.observers = Dir.glob(Rails.root.join('app', 'observers', '**', '*.rb')).map {|file_path| File.basename(file_path, '.rb')}
+
 Observers can also be registered on an environment-specific basis by simply using the corresponding environment's configuration file instead of `application.rb`.
 
 ### Action Controller Sweeper
