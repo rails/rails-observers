@@ -61,9 +61,9 @@ class ActiveResourceObservingTest < ActiveSupport::TestCase
     Person.create(:name => 'Rick')
 
     if Rails.version.starts_with? '4.2'
-      assert_equal [:before_save, :before_create, :after_create, :after_create_commit, :after_save], self.history
-    else
       assert_equal [:before_save, :before_create, :after_create, :after_save], self.history
+    else
+      assert_equal [:before_save, :before_create, :after_create, :after_create_commit, :after_save], self.history
     end
   end
 
