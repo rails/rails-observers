@@ -34,6 +34,7 @@ module Rails
           # which calls `instantiate_observers` to instantiate a `UserObserver`
           # which eventually calls `observed_class` thus constantizing `"User"`,
           # the class we're loading. 💣💥
+          require "active_record"
           require "active_record/base"
         rescue LoadError
         end
