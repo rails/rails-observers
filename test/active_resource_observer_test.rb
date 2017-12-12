@@ -16,9 +16,22 @@ class ActiveResourceObservingTest < ActiveSupport::TestCase
   class PersonObserver < ActiveModel::Observer
     observe :person
 
-    %w( after_create after_destroy after_save after_update
-        before_create before_destroy before_save before_update).each do |method|
-          define_method(method) { |*| log method }
+    callbacks = [
+      :after_create,
+      :after_create_commit,
+      :after_destroy,
+      :after_destroy_commit,
+      :after_save,
+      :after_update,
+      :after_update_commit,
+      :before_create,
+      :before_destroy,
+      :before_save,
+      :before_update
+    ]
+
+    callbacks.each do |method|
+      define_method(method) { |*| log method }
     end
 
     private
@@ -46,18 +59,33 @@ class ActiveResourceObservingTest < ActiveSupport::TestCase
 
   def test_create_fires_save_and_create_notifications
     Person.create(:name => 'Rick')
-    assert_equal [:before_save, :before_create, :after_create, :after_save], self.history
+
+    if Rails.version.starts_with? '4.2'
+      assert_equal [:before_save, :before_create, :after_create, :after_save], self.history
+    else
+      assert_equal [:before_save, :before_create, :after_create, :after_create_commit, :after_save], self.history
+    end
   end
 
   def test_update_fires_save_and_update_notifications
     person = Person.find(1)
     person.save
-    assert_equal [:before_save, :before_update, :after_update, :after_save], self.history
+
+    if Rails.version.starts_with? '4.2'
+      assert_equal [:before_save, :before_update, :after_update, :after_save], self.history
+    else
+      assert_equal [:before_save, :before_update, :after_update, :after_update_commit, :after_save], self.history
+    end
   end
 
   def test_destroy_fires_destroy_notifications
     person = Person.find(1)
     person.destroy
-    assert_equal [:before_destroy, :after_destroy], self.history
+
+    if Rails.version.starts_with? '4.2'
+      assert_equal [:before_destroy, :after_destroy], self.history
+    else
+      assert_equal [:before_destroy, :after_destroy, :after_destroy_commit], self.history
+    end
   end
 end
