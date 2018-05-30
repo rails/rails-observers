@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require 'mocha/mini_test'
+require 'mocha/minitest'
 require 'active_record'
 require 'rails'
 require 'rails/observers/activerecord/active_record'
