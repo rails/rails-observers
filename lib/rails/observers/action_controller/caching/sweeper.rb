@@ -1,11 +1,17 @@
 module ActionController #:nodoc:
   module Caching
     class Sweeper < ActiveRecord::Observer #:nodoc:
-      attr_accessor :controller
-
       def initialize(*args)
         super
-        @controller = nil
+        self.controller = nil
+      end
+
+      def controller
+        Thread.current["observer:#{self.class.name}_controller"]
+      end
+
+      def controller=(controller)
+        Thread.current["observer:#{self.class.name}_controller"] = controller
       end
 
       def before(controller)
@@ -53,8 +59,13 @@ module ActionController #:nodoc:
       end
 
       def method_missing(method, *arguments, &block)
-        return super unless @controller
-        @controller.__send__(method, *arguments, &block)
+        return super if controller.nil?
+        controller.__send__(method, *arguments, &block)
+      end
+
+      # @see https://robots.thoughtbot.com/always-define-respond-to-missing-when-overriding
+      def respond_to_missing?(method, include_private = false)
+        (controller.present? && controller.respond_to?(method)) || super
       end
     end
   end
