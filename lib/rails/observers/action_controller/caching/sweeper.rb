@@ -63,7 +63,6 @@ module ActionController #:nodoc:
         controller.__send__(method, *arguments, &block)
       end
 
-      # @see https://robots.thoughtbot.com/always-define-respond-to-missing-when-overriding
       def respond_to_missing?(method, include_private = false)
         (controller.present? && controller.respond_to?(method)) || super
       end
