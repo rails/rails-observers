@@ -231,6 +231,17 @@ class LifecycleTest < ActiveSupport::TestCase
     assert_not_nil observer.topic_ids.last
   end
 
+  test "disabling around filter does not impact ActiveRecord saving" do
+    observer = AroundTopicObserver.instance
+    observer.topic_ids.clear
+    ActiveRecord::Base.observers.disable AroundTopicObserver do
+      topic = AroundTopic.new
+      topic.save
+      assert_not_nil topic.id
+    end
+    assert_empty observer.topic_ids
+  end
+
   test "able to disable observers" do
     observer = DeveloperObserver.instance # activate
     observer.calls.clear
