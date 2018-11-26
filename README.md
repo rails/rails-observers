@@ -79,7 +79,15 @@ the observer's `before_destroy` is called.
 
 For an observer to be active, it must be registered first. This can be done by adding the following line into the `application.rb`:
 
+```
     config.active_record.observers = :contact_observer
+```
+
+Enable multiple observers using array:
+
+```
+    config.active_record.observers = [:contact_observer, :user_observer]
+```
 
 Observers can also be registered on an environment-specific basis by simply using the corresponding environment's configuration file instead of `application.rb`.
 
