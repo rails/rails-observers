@@ -32,11 +32,11 @@ matrix:
     - rvm: 2.5.5
       gemfile: gemfiles/rails_5_0.gemfile
     - rvm: 2.2.10
-    - gemfile: gemfiles/rails_master.gemfile
+      gemfile: gemfiles/rails_master.gemfile
     - rvm: 2.3.8
-    - gemfile: gemfiles/rails_master.gemfile
+      gemfile: gemfiles/rails_master.gemfile
     - rvm: 2.4.6
-    - gemfile: gemfiles/rails_master.gemfile
+      gemfile: gemfiles/rails_master.gemfile
   allow_failures:
     - rvm: ruby-head
     - gemfile: gemfiles/rails_master.gemfile
