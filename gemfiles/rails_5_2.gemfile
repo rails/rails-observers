@@ -4,6 +4,7 @@ source "https://rubygems.org"
 gem "rails", github: "rails/rails", branch: "5-2-stable"
 gem "minitest", "~> 5.8.4"
 gem "activeresource", github: "rails/activeresource"
+gem "bootsnap"
 
 gem "mocha", require: false
 
