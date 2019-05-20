@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem"s dependencies in active_record-observers.gemspec
+# Specify your gem's dependencies in active_record-observers.gemspec
 gem "rails", github: "rails/rails"
 gem "minitest", "~> 5.8.4"
 gem "activeresource", github: "rails/activeresource"
