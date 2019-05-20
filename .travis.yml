@@ -18,6 +18,8 @@ gemfile:
   - Gemfile
 matrix:
   exclude:
+    - rvm: ruby-head
+      gemfile: gemfiles/rails_4_2.gemfile
     - rvm: 2.6.3
       gemfile: gemfiles/rails_4_2.gemfile
     - rvm: 2.6.3
