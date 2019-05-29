@@ -109,7 +109,6 @@ class ObserverArrayTest < ActiveSupport::TestCase
 
   test "can disable observers on individual models without affecting those observers on other models" do
     Widget.observers.disable :all
-
     assert_observer_not_notified Widget, WidgetObserver
     assert_observer_notified     Budget, BudgetObserver
     assert_observer_not_notified Widget, AuditTrail
@@ -160,6 +159,13 @@ class ObserverArrayTest < ActiveSupport::TestCase
     assert_observer_notified     Budget, BudgetObserver
     assert_observer_not_notified Widget, AuditTrail
     assert_observer_notified     Budget, AuditTrail
+  end
+
+  test "can enable observer without side effects on other threads" do
+    Thread.new do
+      Widget.observers.disable :audit_trail
+    end.join()
+    assert_observer_notified Widget, AuditTrail
   end
 
   test "raises an appropriate error when a developer accidentally enables or disables the wrong class (i.e. Widget instead of WidgetObserver)" do

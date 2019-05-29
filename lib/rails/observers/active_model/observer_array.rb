@@ -73,7 +73,11 @@ module ActiveModel
     protected
 
       def disabled_observers #:nodoc:
-        @disabled_observers ||= Set.new
+        DisabledObserversRegistry.disabled_observers_per_class[model_class] ||= Set.new
+      end
+
+      def disabled_observers= observers #:nodoc:
+        DisabledObserversRegistry.disabled_observers_per_class[model_class] = observers
       end
 
       def observer_class_for(observer) #:nodoc:
@@ -95,11 +99,11 @@ module ActiveModel
       end
 
       def disabled_observer_stack #:nodoc:
-        @disabled_observer_stack ||= []
+        DisabledObserversRegistry.disabled_observers_stacks_per_class[model_class] ||= []
       end
 
       def end_transaction #:nodoc:
-        @disabled_observers = disabled_observer_stack.pop
+        self.disabled_observers = disabled_observer_stack.pop
         each_subclass_array do |array|
           array.end_transaction
         end
