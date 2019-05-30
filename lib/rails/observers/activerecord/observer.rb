@@ -110,7 +110,9 @@ module ActiveRecord
         observer = self
         observer_name = observer.class.name.underscore.gsub('/', '__')
 
-        ActiveRecord::Callbacks::CALLBACKS.each do |callback|
+        callbacks = ActiveRecord::Callbacks::CALLBACKS + [:after_create_commit, :after_update_commit, :after_destroy_commit]
+
+        callbacks.each do |callback|
           next unless respond_to?(callback)
           callback_meth = :"_notify_#{observer_name}_for_#{callback}"
           unless klass.respond_to?(callback_meth)
