@@ -5,7 +5,13 @@ require 'rails/observers/action_controller/caching'
 
 SharedTestRoutes = ActionDispatch::Routing::RouteSet.new
 
-class AppSweeper < ActionController::Caching::Sweeper; end
+class AppSweeper < ActionController::Caching::Sweeper
+
+  def around_save(record)
+    yield :in_around_save
+  end
+
+end
 
 class SweeperTestController < ActionController::Base
   include SharedTestRoutes.url_helpers
@@ -38,6 +44,25 @@ class SweeperTest < ActionController::TestCase
     assert_raise NoMethodError do
       sweeper.send_not_defined
     end
+  end
+
+  def test_sweeper_should_not_respond_to_update_if_controller_is_not_set
+    sweeper = AppSweeper.send(:new)
+    yielded_value = nil
+    sweeper.update(:around_save, Object.new) do |val|
+      yielded_value = val
+    end
+    assert_nil yielded_value
+  end
+
+  def test_sweeper_should_respond_to_update_if_controller_is_set
+    sweeper = AppSweeper.send(:new)
+    sweeper.controller = SweeperTestController.new
+    yielded_value = nil
+    sweeper.update(:around_save, Object.new) do |val|
+      yielded_value = val
+    end
+    assert_equal :in_around_save, yielded_value
   end
 
   def test_sweeper_should_not_block_rendering

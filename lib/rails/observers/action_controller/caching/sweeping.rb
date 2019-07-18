@@ -1,7 +1,9 @@
 module ActionController #:nodoc:
   module Caching
     # Sweepers are the terminators of the caching world and responsible for expiring caches when model objects change.
-    # They do this by being half-observers, half-filters and implementing callbacks for both roles. A Sweeper example:
+    # They do this by being observers of model that are executed only when specified controller action is being executed.
+    # Sweeper can access the corresponding controller via <tt>controller</tt> accessor. Additionally, missing method calls are automatically routed to the corresponding controller.
+    # A Sweeper example:
     #
     #   class ListSweeper < ActionController::Caching::Sweeper
     #     observe List, Item
@@ -21,7 +23,7 @@ module ActionController #:nodoc:
     #     cache_sweeper :list_sweeper, :only => [ :edit, :destroy, :share ]
     #   end
     #
-    # In the example above, four actions are cached and three actions are responsible for expiring those caches.
+    # In the example above, four actions are cached and three actions are responsible for expiring those caches, i.e. <tt>ListSweeper.after_save</tt> will only be executed in the context of those actions.
     #
     # You can also name an explicit class in the declaration of a sweeper, which is needed if the sweeper is in a module:
     #
