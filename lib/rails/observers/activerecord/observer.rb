@@ -94,6 +94,12 @@ module ActiveRecord
   #
   class Observer < ActiveModel::Observer
 
+    CALLBACKS = ActiveRecord::Callbacks::CALLBACKS.dup
+
+    if Rails.version >= '5'
+      CALLBACKS.push(:after_create_commit, :after_update_commit, :after_destroy_commit)
+    end
+
     protected
 
       def observed_classes
@@ -110,7 +116,7 @@ module ActiveRecord
         observer = self
         observer_name = observer.class.name.underscore.gsub('/', '__')
 
-        ActiveRecord::Callbacks::CALLBACKS.each do |callback|
+        CALLBACKS.each do |callback|
           next unless respond_to?(callback)
           callback_meth = :"_notify_#{observer_name}_for_#{callback}"
           unless klass.respond_to?(callback_meth)
