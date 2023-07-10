@@ -1,11 +1,13 @@
 require 'singleton'
-require 'rails/observers/active_model/observer_array'
+require 'set'
+require 'active_support/core_ext/module/attribute_accessors_per_thread'
 require 'active_support/core_ext/module/aliasing'
 require 'active_support/core_ext/module/remove_method'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/core_ext/enumerable'
 require 'active_support/core_ext/object/try'
 require 'active_support/descendants_tracker'
+require 'rails/observers/active_model/observer_array'
 
 module ActiveModel
   # == Active Model Observers Activation

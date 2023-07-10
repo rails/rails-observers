@@ -227,12 +227,12 @@ class TransactionCallbacksTest < ActiveSupport::TestCase
   def test_after_transaction_callbacks_should_prevent_callbacks_from_being_called
     def @first.last_after_transaction_error=(e); @last_transaction_error = e; end
     def @first.last_after_transaction_error; @last_transaction_error; end
-    @first.after_commit_block{|r| r.last_after_transaction_error = :commit; raise "fail!";}
-    @first.after_rollback_block{|r| r.last_after_transaction_error = :rollback; raise "fail!";}
+    @first.after_commit_block{|r| r.last_after_transaction_error = :commit; throw :abort;}
+    @first.after_rollback_block{|r| r.last_after_transaction_error = :rollback; throw :abort;}
     @second.after_commit_block{|r| r.history << :after_commit}
     @second.after_rollback_block{|r| r.history << :after_rollback}
 
-    assert_raises RuntimeError do
+    assert_raises UncaughtThrowError do
       Topic.transaction do
         @first.save!
         @second.save!
@@ -243,7 +243,7 @@ class TransactionCallbacksTest < ActiveSupport::TestCase
 
     @second.history.clear
 
-    assert_raises RuntimeError do
+    assert_raises UncaughtThrowError do
       Topic.transaction do
         @first.save!
         @second.save!

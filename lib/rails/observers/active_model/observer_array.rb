@@ -1,18 +1,28 @@
-require 'set'
-
 module ActiveModel
   # Stores the enabled/disabled state of individual observers for
   # a particular model class.
   class ObserverArray < Array
     attr_reader :model_class
-    def initialize(model_class, *args) #:nodoc:
+
+    thread_mattr_accessor :disabled_observers_registry
+    thread_mattr_accessor :disabled_observer_stack_registry
+
+    attr_accessor :disabled_observers, :disabled_observer_stack
+
+    def initialize(model_class, *args) # :nodoc:
       @model_class = model_class
+      disabled_observers_registry ||= {}
+      disabled_observers_registry[model_class] ||= Set.new
+      disabled_observer_stack_registry ||= {}
+      disabled_observer_stack_registry[model_class] ||= []
+      @disabled_observers = disabled_observers_registry[model_class]
+      @disabled_observer_stack = disabled_observer_stack_registry[model_class]
       super(*args)
     end
 
     # Returns +true+ if the given observer is disabled for the model class,
     # +false+ otherwise.
-    def disabled_for?(observer) #:nodoc:
+    def disabled_for?(observer) # :nodoc:
       disabled_observers.include?(observer.class)
     end
 
@@ -72,81 +82,71 @@ module ActiveModel
 
     protected
 
-      def disabled_observers #:nodoc:
-        @disabled_observers ||= Set.new
+    def observer_class_for(observer) # :nodoc:
+      return observer if observer.is_a?(Class)
+
+      if observer.respond_to?(:to_sym) # string/symbol
+        observer.to_s.camelize.constantize
+      else
+        raise ArgumentError, "#{observer} was not a class or a " +
+                             'lowercase, underscored class name as expected.'
       end
+    end
 
-      def observer_class_for(observer) #:nodoc:
-        return observer if observer.is_a?(Class)
-
-        if observer.respond_to?(:to_sym) # string/symbol
-          observer.to_s.camelize.constantize
-        else
-          raise ArgumentError, "#{observer} was not a class or a " +
-            "lowercase, underscored class name as expected."
-        end
+    def start_transaction # :nodoc:
+      disabled_observer_stack.push(disabled_observers.dup)
+      each_subclass_array do |array|
+        array.start_transaction
       end
+    end
 
-      def start_transaction #:nodoc:
-        disabled_observer_stack.push(disabled_observers.dup)
-        each_subclass_array do |array|
-          array.start_transaction
-        end
+    def end_transaction # :nodoc:
+      self.disabled_observers = disabled_observer_stack.pop
+      each_subclass_array do |array|
+        array.end_transaction
       end
+    end
 
-      def disabled_observer_stack #:nodoc:
-        @disabled_observer_stack ||= []
+    def transaction # :nodoc:
+      start_transaction
+
+      begin
+        yield
+      ensure
+        end_transaction
       end
+    end
 
-      def end_transaction #:nodoc:
-        @disabled_observers = disabled_observer_stack.pop
-        each_subclass_array do |array|
-          array.end_transaction
-        end
+    def each_subclass_array # :nodoc:
+      model_class.descendants.each do |subclass|
+        yield subclass.observers
       end
+    end
 
-      def transaction #:nodoc:
-        start_transaction
-
-        begin
+    def set_enablement(enabled, observers) # :nodoc:
+      if block_given?
+        transaction do
+          set_enablement(enabled, observers)
           yield
-        ensure
-          end_transaction
         end
-      end
+      else
+        observers = ActiveModel::Observer.descendants if observers == [:all]
+        observers.each do |obs|
+          klass = observer_class_for(obs)
 
-      def each_subclass_array #:nodoc:
-        model_class.descendants.each do |subclass|
-          yield subclass.observers
-        end
-      end
+          raise ArgumentError, "#{obs} does not refer to a valid observer" unless klass < ActiveModel::Observer
 
-      def set_enablement(enabled, observers) #:nodoc:
-        if block_given?
-          transaction do
-            set_enablement(enabled, observers)
-            yield
-          end
-        else
-          observers = ActiveModel::Observer.descendants if observers == [:all]
-          observers.each do |obs|
-            klass = observer_class_for(obs)
-
-            unless klass < ActiveModel::Observer
-              raise ArgumentError.new("#{obs} does not refer to a valid observer")
-            end
-
-            if enabled
-              disabled_observers.delete(klass)
-            else
-              disabled_observers << klass
-            end
-          end
-
-          each_subclass_array do |array|
-            array.set_enablement(enabled, observers)
+          if enabled
+            disabled_observers.delete(klass)
+          else
+            disabled_observers << klass
           end
         end
+
+        each_subclass_array do |array|
+          array.set_enablement(enabled, observers)
+        end
       end
+    end
   end
 end

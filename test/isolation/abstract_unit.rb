@@ -14,8 +14,8 @@ require 'active_support/test_case'
 
 # These files do not require any others and are needed
 # to run the tests
-require "active_support/testing/isolation"
-require "active_support/core_ext/kernel/reporting"
+require 'active_support/testing/isolation'
+require 'active_support/core_ext/kernel/reporting'
 require 'tmpdir'
 
 module TestHelpers
@@ -40,7 +40,7 @@ module TestHelpers
 
   module Generation
     # Build an application by invoking the generator and going through the whole stack.
-    def build_app(options = {})
+    def build_app(_options = {})
       @prev_rails_env = ENV['RAILS_ENV']
       ENV['RAILS_ENV'] = 'development'
 
@@ -48,21 +48,19 @@ module TestHelpers
       FileUtils.cp_r(app_template_path, app_path)
 
       # Delete the initializers unless requested
-      unless options[:initializers]
-        Dir["#{app_path}/config/initializers/*.rb"].each do |initializer|
-          File.delete(initializer)
-        end
-      end
+      # unless options[:initializers]
+      #   Dir["#{app_path}/config/initializers/*.rb"].each do |initializer|
+      #     File.delete(initializer)
+      #   end
+      # end
 
-      gemfile_path = "#{app_path}/Gemfile"
-      if options[:gemfile].blank? && File.exist?(gemfile_path)
-        File.delete gemfile_path
-      end
+      # gemfile_path = "#{app_path}/Gemfile"
+      # File.delete gemfile_path if options[:gemfile].blank? && File.exist?(gemfile_path)
 
       routes = File.read("#{app_path}/config/routes.rb")
       if routes =~ /(\n\s*end\s*)\Z/
         File.open("#{app_path}/config/routes.rb", 'w') do |f|
-          f.puts $` + "\nmatch ':controller(/:action(/:id))(.:format)', :via => :all\n" + $1
+          f.puts ::Regexp.last_match.pre_match + "\nmatch ':controller(/:action(/:id))(.:format)', :via => :all\n" + ::Regexp.last_match(1)
         end
       end
 
@@ -72,6 +70,7 @@ module TestHelpers
         config.active_support.deprecation = :log
         config.action_controller.allow_forgery_protection = false
         config.eager_load = false
+        config.active_record.legacy_connection_handling = true
       RUBY
     end
 
@@ -83,7 +82,7 @@ module TestHelpers
       environment = File.read("#{app_path}/config/application.rb")
       if environment =~ /(\n\s*end\s*end\s*)\Z/
         File.open("#{app_path}/config/application.rb", 'w') do |f|
-          f.puts $` + "\n#{str}\n" + $1
+          f.puts ::Regexp.last_match.pre_match + "\n#{str}\n" + ::Regexp.last_match(1)
         end
       end
     end
@@ -115,5 +114,5 @@ Module.new do
   FileUtils.rm_rf(app_template_path)
   FileUtils.mkdir(app_template_path)
 
-  `rails new #{app_template_path} --skip-gemfile --skip-listen`
+  `rails new #{app_template_path} --minimal --api`
 end
